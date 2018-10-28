@@ -343,24 +343,17 @@ public class ExcelCaculateParams {
      * @param sheet
      */
     public static List<String>[] getEarthquakeAndShear(XSSFSheet sheet) {
-        List<String> ss = new ArrayList<>();
         List<String> fx = new ArrayList<>();
         List<String> fy = new ArrayList<>();
         XSSFRow row;
-        XSSFCell cell;
-        String value;
         Iterator it = sheet.iterator();
         it.next();
         it.next();
         while (it.hasNext()) {
             row = (XSSFRow) it.next();
-            value = Util.getValueFromXssfcell(row.getCell(3));
-            String  xxx = Util.getValueFromXssfcell(row.getCell(10));
             fx.add(Util.getValueFromXssfcell(row.getCell(3)));
             fy.add(Util.getValueFromXssfcell(row.getCell(10)));
         }
-        int s = fx.size();
-        String a = fx.get(s - 1);
         return new List[]{fx, fy};
     }
 

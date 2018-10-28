@@ -301,8 +301,8 @@ public class Util {
 			floorH = Double.valueOf(floorHight.get(displace[0].length - i - 1));
 			//循环列
 			for (int j = 0; j < displace[0][0].length ; j++) {
-				returnValue[0][floor - i - 1][j] = String.valueOf(floorH/Double.valueOf(displace[0][floor - i - 1][j]));
-				returnValue[1][floor - i - 1][j] = String.valueOf(floorH/Double.valueOf(displace[1][floor - i - 1][j]));
+				returnValue[0][floor - i - 1][j] = String.valueOf(floorH/Util.getPrecisionDouble(displace[0][floor - i - 1][j],2));
+				returnValue[1][floor - i - 1][j] = String.valueOf(floorH/Util.getPrecisionDouble(displace[1][floor - i - 1][j],2));
 			}
 		}
 		return returnValue;
