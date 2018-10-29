@@ -1073,14 +1073,14 @@ public class InsertToWord {
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row25.getCell(2).getText()), 1d / Double.valueOf(row25.getCell(3).getText()));
                 dealCellSM(row25.getCell(10), Util.getPrecisionString(forceEnvelope, 0));
                 dealCellSM(row25.getCell(11), Util.getPrecisionString(shapeEnvelope, 2));
-                dealCellSM(row25.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
+//                dealCellSM(row25.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
                 //极限值
-                speedLimit = Double.valueOf(row25.getCell(12).getText()) * 1.2d;
+                speedLimit = speedEnvelope * 1.2d;
                 forceLimit = Math.pow(speedLimit, Double.valueOf(row25.getCell(3).getText())) * Double.valueOf(row25.getCell(2).getText());
                 shapeLimit = shapeEnvelope * 1.2d;
-                dealCellSM(row25.getCell(15), Util.getPrecisionString(speedLimit, 0));
-                dealCellSM(row25.getCell(13), Util.getPrecisionString(forceLimit, 0));
-                dealCellSM(row25.getCell(14), Util.getPrecisionString(shapeLimit, 1));
+//                dealCellSM(row25.getCell(15), Util.getPrecisionString(speedLimit, 0));
+                dealCellSM(row25.getCell(12), Util.getPrecisionString(forceLimit, 0));
+                dealCellSM(row25.getCell(13), Util.getPrecisionString(shapeLimit, 1));
                 //较大值比较选择
                 propertyMax[0] = Math.max(propertyMax[0], forceEnvelope);
                 propertyMax[1] = Math.max(propertyMax[1], shapeEnvelope);
@@ -1097,14 +1097,14 @@ public class InsertToWord {
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row26.getCell(2).getText()), 1d / Double.valueOf(row26.getCell(3).getText()));
                 dealCellSM(row26.getCell(10), Util.getPrecisionString(forceEnvelope, 0));
                 dealCellSM(row26.getCell(11), Util.getPrecisionString(shapeEnvelope, 2));
-                dealCellSM(row26.getCell(12), Util.getPrecisionString(Math.pow(forceEnvelope / Double.valueOf(row26.getCell(2).getText()), 1d / Double.valueOf(row26.getCell(3).getText())), 0));
+//                dealCellSM(row26.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
                 //极限值
-                speedLimit = Double.valueOf(row26.getCell(12).getText()) * 1.2d;
+                speedLimit = speedEnvelope * 1.2d;
                 forceLimit = Math.pow(speedLimit, Double.valueOf(row26.getCell(3).getText())) * Double.valueOf(row26.getCell(2).getText());
                 shapeLimit = shapeEnvelope * 1.2d;
-                dealCellSM(row26.getCell(15), Util.getPrecisionString(Double.valueOf(row26.getCell(12).getText()) * 1.2d, 0));
-                dealCellSM(row26.getCell(13), Util.getPrecisionString(Math.pow(Double.valueOf(row26.getCell(15).getText()), Double.valueOf(row26.getCell(3).getText())) * Double.valueOf(row26.getCell(2).getText()), 0));
-                dealCellSM(row26.getCell(14), Util.getPrecisionString(shapeEnvelope * 1.2d, 1));
+//                dealCellSM(row26.getCell(15), Util.getPrecisionString(speedEnvelope, 0));
+                dealCellSM(row26.getCell(12), Util.getPrecisionString(forceLimit, 0));
+                dealCellSM(row26.getCell(13), Util.getPrecisionString(shapeLimit, 1));
 
                 //较大值比较选择
                 propertyMax[0] = Math.max(propertyMax[0], forceEnvelope);
@@ -1119,12 +1119,13 @@ public class InsertToWord {
             table26.removeRow(floor + 4);
 
             //处理table1
-//            dealCellSM(table1.getRow(3).getCell(2), table25.getRow(4).getCell(2).getText());
-//            dealCellSM(table1.getRow(4).getCell(2), table25.getRow(4).getCell(3).getText());
-//            dealCellSM(table1.getRow(5).getCell(2), Util.getPrecisionString(propertyMax[0], 0));
-//            dealCellSM(table1.getRow(6).getCell(2), Util.getPrecisionString(propertyMax[3], 0));
-//            dealCellSM(table1.getRow(9).getCell(2), String.valueOf(floor * 2));
+            dealCellSM(table1.getRow(1).getCell(3), Util.getPrecisionString(propertyMax[0], 0));
+            dealCellSM(table1.getRow(1).getCell(4), Util.getPrecisionString(propertyMax[1], 0));
+            dealCellSM(table1.getRow(1).getCell(5), Util.getPrecisionString(propertyMax[3], 0));
+            dealCellSM(table1.getRow(1).getCell(6), Util.getPrecisionString(propertyMax[4], 0));
 
+            dealCellSM(table1.getRow(1).getCell(8), (floor*2)+"");
+            dealCellSM(table1.getRow(2).getCell(1), (floor*2)+"");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理 结构各层阻尼器最大出力及位移包络值汇总表发生异常");
