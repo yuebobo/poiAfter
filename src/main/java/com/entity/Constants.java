@@ -61,8 +61,13 @@ public  class Constants {
 	public static final String PARAM_afS = "PARAM_afS";
 	public static final String PARAM_af1 = "PARAM_af1";
 
-	//楼层高度
+	//楼层高度,累计层高
 	public static final String FLOOR_H = "FLOOR_H";
+	public static final String ACCOUNT_FLOOR_H = "ACCOUNT_FLOOR_H";
+
+	public static final String X = "X";
+	public static final String Y = "Y";
+
 
 	//阻尼器高度
 	public static final String DAMPER_H = "DAMPER_H";

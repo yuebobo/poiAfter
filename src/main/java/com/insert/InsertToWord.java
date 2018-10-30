@@ -19,8 +19,17 @@ public class InsertToWord {
 
     private static String basePath;
 
-    //模型中的编号
+
+    //原来的模型中的编号
     private static String[][][] modelNo;
+
+
+    private static void init(){
+        System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
+        String path = basePath + "\\excel\\材料数据.xlsx";
+//        GetExcelValue.init(path,FLOOR_H,ACCOUNT_FLOOR_H,CAD_MODEL_X,CAD_MODEL_Y);
+    }
+
 
     /**
      * 对word文件插入值

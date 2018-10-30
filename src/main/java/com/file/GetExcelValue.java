@@ -1,5 +1,7 @@
 package com.file;
 
+import com.entity.BaseDate;
+import com.entity.Constants;
 import com.excel.sheet.*;
 import com.util.Util;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,6 +19,77 @@ import java.util.Map;
  *
  */
 public class GetExcelValue {
+
+    public static void init(String path){
+        {
+            FileInputStream e = null;
+            try {
+                e = new FileInputStream(path);
+                XSSFWorkbook excel = new XSSFWorkbook(e);
+
+                //数据获取
+                BaseDate data = new BaseDate();
+
+                //层高
+				System.out.println("层高：");
+				data.FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8), Constants.FLOOR_H);
+
+				//累计层高
+				System.out.println("累计层高：");
+				data.ACCOUNT_FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8),Constants.ACCOUNT_FLOOR_H);
+
+				//X向CAD编号
+				System.out.println("X向CAD编号");
+				data.CAD_MODEL_X = ExcelCaculateParams.getCADModel(excel.getSheetAt(8),Constants.X);
+
+				//Y向CAD编号
+				System.out.println("Y向CAD编号");
+				data.CAD_MODEL_Y = ExcelCaculateParams.getCADModel(excel.getSheetAt(8),Constants.Y);
+
+                //周期
+                data.CECLE = ExcelCaculateParams.getCycle(excel.getSheetAt(5));
+
+                //质量
+                data.QUALITY = ExcelCaculateParams.getQuality(excel.getSheetAt(4));
+
+                //减震剪力
+                System.out.println("减震剪力：");
+                data.FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel.getSheetAt(7));
+
+                //非减震剪力
+                System.out.println("非减震剪力：");
+                data.NOT_FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel.getSheetAt(6));
+
+
+				//梁
+//				data.GIRDER_PARAMS = ExcelCaculateParams.getParamsOfGirder(excel);
+//				//柱
+//				data.PILLAR_PARAMS = ExcelCaculateParams.getParamsOfPillar(excel);
+//				//悬臂
+//				data.CANTILEVER_PARAMS = ExcelCaculateParams.getParamsOfCantilever(excel);
+
+
+
+            } catch (FileNotFoundException e1) {
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"+path+"没找到");
+                return ;
+            } catch (IOException e1) {
+                System.out.println("$$$  初始化  异常 $$$$$$"+path+"处理异常");
+                return ;
+            }
+            finally {
+                if(e != null){
+                    try {
+                        e.close();
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        }
+
+    }
+
 
 	/**
 	 * 1.模型对比
@@ -531,7 +604,7 @@ public class GetExcelValue {
 		}
 	}
 	
-	private static void arrayToString(String[] array){
+	public static void arrayToString(String[] array){
 		for (int i = 0; i < array.length; i++) {
 			System.out.print(array[i] + ",  ");
 		}

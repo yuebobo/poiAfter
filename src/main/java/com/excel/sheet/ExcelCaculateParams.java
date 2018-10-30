@@ -1,7 +1,9 @@
 package com.excel.sheet;
 
 import com.entity.Constants;
+import com.file.GetExcelValue;
 import com.util.Util;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -324,6 +326,8 @@ public class ExcelCaculateParams {
         data[0] = Util.getValueFromXssfcell(sheet.getRow(2).getCell(1));
         data[1] = Util.getValueFromXssfcell(sheet.getRow(3).getCell(1));
         data[2] = Util.getValueFromXssfcell(sheet.getRow(4).getCell(1));
+        System.out.println("周期对比：");
+        GetExcelValue.arrayToString(data);
         return data;
     }
 
@@ -333,7 +337,10 @@ public class ExcelCaculateParams {
      * @param sheet
      */
     public static String getQuality(XSSFSheet sheet) {
-        return Util.getValueFromXssfcell(sheet.getRow(0).getCell(0));
+        String quality = Util.getValueFromXssfcell(sheet.getRow(0).getCell(0));
+        System.out.println("==========================================");
+        System.out.println("质量： " + quality );
+        return quality;
     }
 
 
@@ -354,7 +361,40 @@ public class ExcelCaculateParams {
             fx.add(Util.getValueFromXssfcell(row.getCell(3)));
             fy.add(Util.getValueFromXssfcell(row.getCell(10)));
         }
+
+        System.out.println("X方向 ：");
+        System.out.println(fx);
+        System.out.println("Y方向 ：");
+        System.out.println(fy);
         return new List[]{fx, fy};
+    }
+
+
+    /**
+     * 获取层高，累计层高
+     * @param sheet
+     * @param type
+     * @return
+     */
+    public static Double[] getFloorH(XSSFSheet sheet,String type){
+        Iterator<Row> it = sheet.iterator();
+        if (Constants.FLOOR_H.equals(type)){
+
+        }else if (Constants.ACCOUNT_FLOOR_H.equals(type)){
+
+        }
+        return null;
+    }
+
+
+    //CAD模型编号  第一维表示楼层，第二维表示编号
+    public static String[][] getCADModel(XSSFSheet sheet,String direction){
+        if (Constants.X.equals(direction)){
+
+        }else if (Constants.Y.equals(direction)){
+
+        }
+        return null;
     }
 
 
