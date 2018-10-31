@@ -1,5 +1,6 @@
 package com.insert;
 
+import com.entity.BaseDate;
 import com.file.GetExcelValue;
 import com.txt.TxtGetValue;
 import com.util.Util;
@@ -19,16 +20,10 @@ public class InsertToWord {
 
     private static String basePath;
 
+    private static BaseDate date;
 
     //原来的模型中的编号
     private static String[][][] modelNo;
-
-
-    private static void init(){
-        System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
-        String path = basePath + "\\excel\\材料数据.xlsx";
-//        GetExcelValue.init(path,FLOOR_H,ACCOUNT_FLOOR_H,CAD_MODEL_X,CAD_MODEL_Y);
-    }
 
 
     /**
@@ -88,7 +83,7 @@ public class InsertToWord {
             maxEarthquakeDapmerForceDisplace(tables.get(26), tables.get(27), tables.get(3), tables.get(4));
 //
             //金属阻尼器 表5
-            insertMetalDamper(tables.get(5), tables.get(4),tables.get(19),tables.get(20));
+            insertMetalDamper(tables.get(5), tables.get(4), tables.get(19), tables.get(20));
 
 //            //计算最后几个表里的值
 //            //减震器周边子结构的设计计算方法
@@ -131,7 +126,7 @@ public class InsertToWord {
      * @param table5
      * @param table2
      */
-    private static void insertMetalDamper(XWPFTable table5, XWPFTable table2,XWPFTable tableX, XWPFTable tableY) {
+    private static void insertMetalDamper(XWPFTable table5, XWPFTable table2, XWPFTable tableX, XWPFTable tableY) {
         System.out.println("\n金属阻尼器表格的处理");
         try {
             //获取CAD 编号
@@ -149,9 +144,7 @@ public class InsertToWord {
 
             //每一层对应的金属阻尼器弹性时程平均出力 和	金属阻尼器弹性时程平均位移
             //Double[0] x方向  Double[0][0]为金属阻尼器弹性时程平均出力  Double[0][1]为金属阻尼器弹性时程平均位移
-            Map<Integer, Double[][]> mapValueAvg = getAvgValueGroupByFloorFromTable(map,tableX,tableY);
-
-
+            Map<Integer, Double[][]> mapValueAvg = getAvgValueGroupByFloorFromTable(map, tableX, tableY);
 
 
         } catch (Exception e) {
@@ -1238,6 +1231,13 @@ public class InsertToWord {
     }
 
 
+
+    private static void init() {
+        System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
+        String path = basePath + "\\excel\\材料数据.xlsx";
+        date = GetExcelValue.init(path);
+    }
+
     /**
      * 根据CAD中的编号顺序确定每层所对应的编号位置
      *
@@ -1266,6 +1266,7 @@ public class InsertToWord {
 
     /**
      * 按楼层获取相应位置的数的平均数
+     *
      * @param param
      * @param tableX
      * @param tableY
@@ -1273,24 +1274,24 @@ public class InsertToWord {
      */
     private static Map<Integer, Double[][]> getAvgValueGroupByFloorFromTable(Map<Integer, List<Integer>> param, XWPFTable tableX, XWPFTable tableY) {
         Map<Integer, Double[][]> map = new HashMap<>();
-        Double[][] value ;
+        Double[][] value;
         List<XWPFTableRow> rowsX = tableX.getRows();
         List<XWPFTableRow> rowsY = tableY.getRows();
         XWPFTableRow rowX;
         XWPFTableRow rowY;
 
-        Double valueSum1X ;
-        Double valueSum2X ;
-        Double valueSum1Y ;
-        Double valueSum2Y ;
+        Double valueSum1X;
+        Double valueSum2X;
+        Double valueSum1Y;
+        Double valueSum2Y;
         List<Integer> positionList;
         for (int i = 1; i <= param.size(); i++) {
             positionList = param.get(i);
 
-             valueSum1X = 0d;
-             valueSum2X = 0d;
-             valueSum1Y = 0d;
-             valueSum2Y = 0d;
+            valueSum1X = 0d;
+            valueSum2X = 0d;
+            valueSum1Y = 0d;
+            valueSum2Y = 0d;
 
             for (Integer position : positionList) {
                 rowX = rowsX.get(position + 4);
@@ -1314,9 +1315,9 @@ public class InsertToWord {
             value[0][1] = valueSum2X;
             value[1][0] = valueSum1Y;
             value[1][1] = valueSum2Y;
-            map.put(i,value);
+            map.put(i, value);
         }
-       return map;
+        return map;
     }
 
     /**

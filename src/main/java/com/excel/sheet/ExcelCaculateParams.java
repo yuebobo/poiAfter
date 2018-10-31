@@ -339,7 +339,7 @@ public class ExcelCaculateParams {
     public static String getQuality(XSSFSheet sheet) {
         String quality = Util.getValueFromXssfcell(sheet.getRow(0).getCell(0));
         System.out.println("==========================================");
-        System.out.println("质量： " + quality );
+        System.out.println("质量： " + quality);
         return quality;
     }
 
@@ -347,6 +347,7 @@ public class ExcelCaculateParams {
     /**
      * 非减震剪力获取
      * 减震剪力获取
+     *
      * @param sheet
      */
     public static List<String>[] getEarthquakeAndShear(XSSFSheet sheet) {
@@ -356,8 +357,13 @@ public class ExcelCaculateParams {
         Iterator it = sheet.iterator();
         it.next();
         it.next();
+        String str;
         while (it.hasNext()) {
             row = (XSSFRow) it.next();
+            str = Util.getValueFromXssfcell(row.getCell(3));
+            if (str == null || "".equals(str) || 0 == Double.valueOf(str)) {
+                break;
+            }
             fx.add(Util.getValueFromXssfcell(row.getCell(3)));
             fy.add(Util.getValueFromXssfcell(row.getCell(10)));
         }
@@ -372,29 +378,84 @@ public class ExcelCaculateParams {
 
     /**
      * 获取层高，累计层高
+     *
      * @param sheet
      * @param type
      * @return
      */
-    public static Double[] getFloorH(XSSFSheet sheet,String type){
-        Iterator<Row> it = sheet.iterator();
-        if (Constants.FLOOR_H.equals(type)){
-
-        }else if (Constants.ACCOUNT_FLOOR_H.equals(type)){
-
+    public static Double[] getFloorH(XSSFSheet sheet, String type) {
+        Iterator it = sheet.iterator();
+        it.next();
+        it.next();
+        XSSFRow row;
+        List<Double> list = new ArrayList<>();
+        String str;
+        int cellnum = 0;
+        if (Constants.FLOOR_H.equals(type)) {
+            cellnum = 3;
+        } else if (Constants.ACCOUNT_FLOOR_H.equals(type)) {
+            cellnum = 4;
         }
-        return null;
+        while (it.hasNext()) {
+            row = (XSSFRow) it.next();
+            str = Util.getValueFromXssfcell(row.getCell(cellnum));
+            if (str == null || "".equals(str) || 0 == Double.valueOf(str)) break;
+            list.add(Double.valueOf(str));
+        }
+        Double[] value = new Double[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            value[i] = list.get(i);
+        }
+        Util.printArray(value);
+        return value;
     }
 
 
-    //CAD模型编号  第一维表示楼层，第二维表示编号
-    public static String[][] getCADModel(XSSFSheet sheet,String direction){
-        if (Constants.X.equals(direction)){
-
-        }else if (Constants.Y.equals(direction)){
-
+    /**
+     * CAD模型编号  第一维表示楼层，第二维表示编号
+     *
+     * @param sheet
+     * @param direction
+     * @return
+     */
+    public static String[][] getCADModel(XSSFSheet sheet, String direction) {
+        Iterator it = sheet.iterator();
+        it.next();
+        it.next();
+        XSSFRow row;
+        String[] modelNo;
+        List<String[]> list = new ArrayList<>();
+        String str;
+        int cellnum = 0;
+        String xOy = "";
+        int floor;
+        int count;
+        if (Constants.X.equals(direction)) {
+            cellnum = 1;
+            xOy = "X-";
+        } else if (Constants.Y.equals(direction)) {
+            cellnum = 2;
+            xOy = "Y-";
         }
-        return null;
+        while (it.hasNext()) {
+            row = (XSSFRow) it.next();
+            str = Util.getValueFromXssfcell(row.getCell(0));
+            if (str == null || "".equals(str) || 0 == Double.valueOf(str)) break;
+            floor = Integer.valueOf(str.contains(".") ? str.substring(0, str.lastIndexOf(".")) : str);
+            str = Util.getValueFromXssfcell(row.getCell(cellnum));
+            count = Integer.valueOf(str.contains(".") ? str.substring(0, str.lastIndexOf(".")) : str);
+            modelNo = new String[count];
+            for (int i = 0; i < count; i++) {
+                modelNo[i] = xOy + "" + floor + "-" + (i + 1);
+            }
+            list.add(modelNo);
+        }
+        String[][] value = new String[list.size()][];
+        for (int i = 0; i < list.size(); i++) {
+            value[i] = list.get(i);
+        }
+        Util.printArray(value);
+        return value;
     }
 
 
