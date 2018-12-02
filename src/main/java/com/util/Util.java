@@ -307,13 +307,13 @@ public class Util {
      * @param floorHight
      * @return
      */
-    public static String[][][] getDisplaceAngle(String[][][] displace, List<String> floorHight) {
+    public static String[][][] getDisplaceAngle(String[][][] displace, Double[] floorHight) {
         String[][][] returnValue = new String[2][displace[0].length][displace[0][0].length];
         Double floorH;
         int floor = displace[0].length;
         //楼层循环
         for (int i = 0; i < displace[0].length; i++) {
-            floorH = Double.valueOf(floorHight.get(displace[0].length - i - 1));
+            floorH = floorHight[displace[0].length - i - 1];
             //循环列
             for (int j = 0; j < displace[0][0].length; j++) {
                 returnValue[0][floor - i - 1][j] = String.valueOf(floorH / Util.getPrecisionDouble(displace[0][floor - i - 1][j], 2));

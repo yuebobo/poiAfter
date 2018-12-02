@@ -11,16 +11,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class InsertToWord {
 
     private static String basePath;
 
-    private static BaseDate date;
+    private static BaseDate data;
 
     //原来的模型中的编号
     private static String[][][] modelNo;
@@ -42,7 +39,13 @@ public class InsertToWord {
             word = new XWPFDocument(in);
             out = new FileOutputStream(basePath + "\\out" + System.currentTimeMillis() + ".docx");
             List<XWPFTable> tables = word.getTables();
-            modelNo = getModelNo1(tables.get(4));
+//            modelNo = getModelNo1(tables.get(4));
+
+            //初始化，获取初始数据
+            init();
+
+            //CAD模型编号表（SAP模型中编号）
+            insertCADModelNo(tables.get(4));
 
             //模型对比三个表
             insertModelCompare(tables.get(6), tables.get(7), tables.get(8));
@@ -119,6 +122,62 @@ public class InsertToWord {
         }
     }
 
+    /**
+     * CAD模型编号表（SAP模型中编号）
+     * @param table4
+     */
+    private static void insertCADModelNo(XWPFTable table4){
+        System.out.println("=================================================");
+        System.out.println("\n处理 CAD模型编号表（SAP模型中编号）");
+
+        String[][] x_CAD = data.CAD_MODEL_X;
+        String[][] y_CAD = data.CAD_MODEL_Y;
+
+//      x方向
+        boolean flage = true;
+        String value;
+        XWPFTableRow row;
+        int countX = 0;
+        for (int i = 0 ; flage ; i++){
+            flage = false;
+
+            for (int k = 0; k < x_CAD.length; k++){
+                try {
+                  value =  x_CAD[k][i];
+                  if (null != value && !"".equals(value)){
+                     row = table4.createRow();
+                     dealCellSM(row.getCell(0),value);
+                     dealCellSM(row.getCell(1),++countX+"");
+                      flage = true;
+                  }
+                }catch (Exception e){ }
+            }
+        }
+        //y方向
+        int countY = 0;
+        int count = countX;
+        flage = true;
+        for (int i = 0 ; flage ; i++){
+            flage = false;
+            for (int k = 0; k < y_CAD.length; k++){
+                try {
+                    value =  y_CAD[k][i];
+                    if (null != value && !"".equals(value)){
+                        row = table4.getRow(countY + 1);
+                        dealCellSM(row.getCell(2),value);
+                        dealCellSM(row.getCell(3),++count+"");
+                        countY++;
+                        if (countY > countX){
+                            System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
+                            flage = false;
+                            break;
+                        }
+                        flage = true;
+                    }
+                }catch (Exception e){ }
+            }
+        }
+    }
 
     /**
      * 金属阻尼器表格的处理
@@ -153,7 +212,6 @@ public class InsertToWord {
         }
     }
 
-
     /**
      * 模型对比三个表的值得插入
      *
@@ -176,14 +234,18 @@ public class InsertToWord {
 //            String qualityOfStructure1 = TxtGetValue.getValueFor1(basePath + "\\txt\\3.txt");
 
             //  == == 从材料数据文件里获取周期，减震剪力对比,质量
-            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
+//            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
 
             //4.周期对比                           （表2   PKPM）
-            String[] cycle1 = (String[]) map.get(1);
+//            String[] cycle1 = (String[]) map.get(1);
+            String[] cycle1 = data.CECLE;
+
             //结构质量对比
-            String qualityOfStructure1 = (String) map.get(2);
+//            String qualityOfStructure1 = (String) map.get(2);
+            String qualityOfStructure1 = data.QUALITY;
             //
-            List[] fxFy = (List[]) map.get(3);
+//            List[] fxFy = (List[]) map.get(3);
+              List[] fxFy = data.FX_FY;
 
             //5.地震剪力对比Fx    （表1   PKPM   X）
             List<String> fx = fxFy[0];
@@ -254,14 +316,11 @@ public class InsertToWord {
             //e2T5R2[0] 为x方向  从0到7   依次为反应普  T1-T5  R1-R2
             //e2T5R2[1] 为y方向
             String[][] e2T5R2 = GetExcelValue.getE2_T5_R2(basePath + "\\excel\\工作簿2.xlsx");
-            XWPFTableRow rowx = table6.getRow(1);
-            XWPFTableRow rowy = table6.getRow(2);
-            XWPFTableCell cellx;
-            XWPFTableCell celly;
 
+//            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
+//            List[] notFxFy = (List[]) map.get(4);
+            List[] notFxFy = data.NOT_FX_FY;
 
-            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
-            List[] notFxFy = (List[]) map.get(4);
             List<String> fx = notFxFy[0];
             List<String> fy = notFxFy[1];
             e2T5R2[0][0] = fx.get(fx.size() - 1);
@@ -271,22 +330,20 @@ public class InsertToWord {
             double x = 0d;
             double y = 0d;
             for (int i = 0; i < 8; i++) {
-                cellx = rowx.getCell(i + 2);
-                celly = rowy.getCell(i + 2);
-                dealCellSM(cellx, Util.getPrecisionString(e2T5R2[0][i], 0));
-                dealCellSM(celly, Util.getPrecisionString(e2T5R2[1][i], 0));
+                dealCellSM(table6.getRow(2).getCell(i + 2), Util.getPrecisionString(e2T5R2[0][i], 0));
+                dealCellSM(table6.getRow(3).getCell(i + 2), Util.getPrecisionString(e2T5R2[1][i], 0));
 
-                dealCellSM(table6.getRow(3).getCell(i + 2), Util.getPrecisionString(Double.valueOf(e2T5R2[0][i]) / Double.valueOf(e2T5R2[0][0]), 2));
-                dealCellSM(table6.getRow(4).getCell(i + 2), Util.getPrecisionString(Double.valueOf(e2T5R2[1][i]) / Double.valueOf(e2T5R2[1][0]), 2));
+                dealCellSM(table6.getRow(4).getCell(i + 2), Util.getPrecisionString(Double.valueOf(e2T5R2[0][i]) / Double.valueOf(e2T5R2[0][0]), 2));
+                dealCellSM(table6.getRow(5).getCell(i + 2), Util.getPrecisionString(Double.valueOf(e2T5R2[1][i]) / Double.valueOf(e2T5R2[1][0]), 2));
                 x += Double.valueOf(e2T5R2[0][i]);
                 y += Double.valueOf(e2T5R2[1][i]);
             }
             x -= Double.valueOf(e2T5R2[0][0]);
             y -= Double.valueOf(e2T5R2[1][0]);
-            dealCellSM(rowx.getCell(10), Util.getPrecisionString(x / 7d, 0));
-            dealCellSM(rowy.getCell(10), Util.getPrecisionString(y / 7d, 0));
-            dealCellSM(table6.getRow(3).getCell(10), Util.getPrecisionString((x / 7d) / Double.valueOf(e2T5R2[0][0]), 2));
-            dealCellSM(table6.getRow(4).getCell(10), Util.getPrecisionString((y / 7d) / Double.valueOf(e2T5R2[1][0]), 2));
+            dealCellSM(table6.getRow(2).getCell(10), Util.getPrecisionString(x / 7d, 0));
+            dealCellSM(table6.getRow(3).getCell(10), Util.getPrecisionString(y / 7d, 0));
+            dealCellSM(table6.getRow(4).getCell(10), Util.getPrecisionString((x / 7d) / Double.valueOf(e2T5R2[0][0]), 2));
+            dealCellSM(table6.getRow(5).getCell(10), Util.getPrecisionString((y / 7d) / Double.valueOf(e2T5R2[1][0]), 2));
         } catch (Exception e) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理非减震结构底部剪力对比表发生异常");
             e.printStackTrace();
@@ -366,8 +423,10 @@ public class InsertToWord {
         try {
             //获取周期
 //            String singleT = TxtGetValue.getSingleT(basePath + "\\txt\\1.txt");
-            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
-            String[] cycle1 = (String[]) map.get(1);
+//            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
+//            String[] cycle1 = (String[]) map.get(1);
+            String[] cycle1 = data.CECLE;
+
             String singleT = cycle1[0];
 
             String path;
@@ -403,9 +462,9 @@ public class InsertToWord {
         System.out.println("\n处理 楼层剪力对比表");
         try {
             String[][][] shearNot = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
-            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
-            //
-            List[] fxFy = (List[]) map.get(3);
+//            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
+//            List[] fxFy = (List[]) map.get(3);
+            List[] fxFy = data.FX_FY;
 
             List<String> earthquakeAfterX = fxFy[0];
             List<String> earthquakeAfterY = fxFy[1];
@@ -413,7 +472,7 @@ public class InsertToWord {
             //楼层数
             int floor = Math.min(shearNot[0].length, shearNot[1].length);
             if (earthquakeAfterY.size() != floor || earthquakeAfterX.size() != floor) {
-                System.out.println("楼层剪力对比表的  来自记事本WZQ里的反应谱的数据的楼层数与来自excel里的楼层数不一致");
+                System.out.println("楼层剪力对比表的  来自材料文件的楼层数与来自excel里的楼层数不一致");
             }
             floor = Math.min(floor, earthquakeAfterY.size());
             floor = Math.min(floor, earthquakeAfterY.size());
@@ -461,13 +520,14 @@ public class InsertToWord {
             //非减震结构层间位移
             String[][][] displaceNot = GetExcelValue.getDisplace(basePath + "\\excel\\工作簿3.xlsx", 2);
             //获取层高数据  此处数值单位为 豪米
-            List<String> floorHight = GetExcelValue.getFloorHigh(basePath + "\\excel\\floorH.xlsx", 0);
+//            List<String> floorHight = GetExcelValue.getFloorHigh(basePath + "\\excel\\floorH.xlsx", 0);
+            Double[] floorHight = data.FLOOR_H;
             //楼层层间位移角
             //非减震结构层间位移
             String[][][] displaceNotAngle = Util.getDisplaceAngle(displaceNot, floorHight);
 
             //楼层数
-            int floor = Math.min(floorHight.size(), displaceNot[0].length);
+            int floor = Math.min(floorHight.length, displaceNot[0].length);
             XWPFTableRow row12;
             XWPFTableRow row14;
 
@@ -501,8 +561,8 @@ public class InsertToWord {
                 dealCellSM(row14.getCell(0), String.valueOf(floor - i));
 
                 //层高
-                dealCellSM(row12.getCell(1), floorHight.get(floor - i - 1));
-                dealCellSM(row14.getCell(1), floorHight.get(floor - i - 1));
+                dealCellSM(row12.getCell(1), floorHight[floor - i - 1].toString());
+                dealCellSM(row14.getCell(1), floorHight[floor - i - 1].toString());
 
                 for (int j = 2; j < 9; j++) {
                     //楼层层间位移对比表
@@ -1235,7 +1295,7 @@ public class InsertToWord {
     private static void init() {
         System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
         String path = basePath + "\\excel\\材料数据.xlsx";
-        date = GetExcelValue.init(path);
+        data = GetExcelValue.init(path);
     }
 
     /**
