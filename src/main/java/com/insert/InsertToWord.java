@@ -6,12 +6,14 @@ import com.txt.TxtGetValue;
 import com.util.Util;
 import org.apache.poi.xwpf.usermodel.*;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
+import sun.nio.cs.ext.MacHebrew;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.DoubleToLongFunction;
 
 public class InsertToWord {
 
@@ -88,7 +90,7 @@ public class InsertToWord {
             maxEarthquakeDapmerForceDisplace(tables.get(26), tables.get(27), tables.get(3));
 //
             //金属阻尼器 表5
-            insertMetalDamper(tables.get(5), tables.get(4), tables.get(19), tables.get(20));
+            insertMetalDamper(tables.get(5), tables.get(4));
 
 //            //计算最后几个表里的值
 //            //减震器周边子结构的设计计算方法
@@ -209,31 +211,116 @@ public class InsertToWord {
      * @param table5
      * @param table2
      */
-    private static void insertMetalDamper(XWPFTable table5, XWPFTable table2, XWPFTable tableX, XWPFTable tableY) {
-        System.out.println("\n金属阻尼器表格的处理");
+    private static void insertMetalDamper(XWPFTable table5, XWPFTable table2) {
+        System.out.println("=================================================");
+        System.out.println("金属阻尼器表格的处理");
         try {
             //获取CAD 编号
             String[][] modelValue = getModelNo(table2);
+            String[][] x_CAD = data.CAD_MODEL_X;
+            String[][] y_CAD = data.CAD_MODEL_Y;
 
             //获取每一层对应的编号位置  位置从0开始
             Map<Integer, List<Integer>> map = getFloorOnPositionOfModelNO(modelValue);
 
-            //获取层高数据  此处数值单位为 豪米
-            List<String> floorHight = GetExcelValue.getFloorHigh(basePath + "\\excel\\floorH.xlsx", 0);
+            //X方向
+            //原来是工作簿4
+            Double[][][] valueX = GetExcelValue.getEarthquakeDamperDisEnergyX(basePath + "\\excel\\工作簿3.xlsx");
+            //阻尼器形变
+            Double[][] shapeX = valueX[0];
+            //阻尼器内力
+            Double[][] forceX = valueX[1];
 
-            if (map.size() != floorHight.size()) {
+            //Y方向
+            //原来是工作簿4
+            Double[][][] valueY = GetExcelValue.getEarthquakeDamperDisEnergyY(basePath + "\\excel\\工作簿3.xlsx");
+            //阻尼器形变
+            Double[][] shapeY = valueY[0];
+            //阻尼器内力
+            Double[][] forceY = valueY[1];
+
+            //获取层高数据  此处数值单位为 豪米
+            Double[] floorH = data.FLOOR_H;
+            if (map.size() != floorH.length) {
                 System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$  金属阻尼器表格  CAD模型编号的楼层数量与层高表里的楼层数量不一致   $$$$$$$$$$$$$  ");
             }
+            Integer floor = floorH.length;
 
             //每一层对应的金属阻尼器弹性时程平均出力 和	金属阻尼器弹性时程平均位移
-            //Double[0] x方向  Double[0][0]为金属阻尼器弹性时程平均出力  Double[0][1]为金属阻尼器弹性时程平均位移
-            Map<Integer, Double[][]> mapValueAvg = getAvgValueGroupByFloorFromTable(map, tableX, tableY);
-
-
+            Map<Integer, Double> forceXAvg = getAvgValueGroupByFloorFromTable(map, forceX);
+            Map<Integer, Double> forceYAvg = getAvgValueGroupByFloorFromTable(map, forceY);
+            Map<Integer, Double> shapeXAvg = getAvgValueGroupByFloorFromTable(map, shapeX);
+            Map<Integer, Double> shapeYAvg = getAvgValueGroupByFloorFromTable(map, shapeY);
+//
+//表头四行，
+            //数据行以表格第五行数据为模版进行加入数据
+            //新加入的行都插入到第六行
+            //最后模板行在数据行的最下边，数据插入完成将其删除
+            XWPFTableRow row500 = table5.getRow(4);
+            XWPFTableRow row ;
+            // Y方向
+            for (Integer i = floor; i >= 1; i--) {
+                for (int k = y_CAD[i-1].length - 1;k >= 0; k--){
+                    table5.addRow(row500, 5);
+                    row = table5.getRow(5);
+                    dealCellSM(row.getCell(0),y_CAD[i-1][k]);
+                    insertTable(row,i,floorH, forceYAvg, shapeYAvg);
+                }
+            }
+            //X方向
+            for (Integer i = floor; i >= 1; i--) {
+                for (int k = x_CAD[i-1].length - 1;k >= 0; k--){
+                    table5.addRow(row500, 5);
+                    row = table5.getRow(5);
+                    dealCellSM(row.getCell(0),x_CAD[i-1][k]);
+                    insertTable(row,i,floorH, forceXAvg, shapeXAvg);
+                }
+            }
+            table5.removeRow(table5.getRows().size()-1);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$金属阻尼器表格的处理时发生异常");
         }
+    }
+
+    private static void insertTable(XWPFTableRow row,int i,Double[] floorH,Map<Integer, Double> forceAvg,Map<Integer, Double> shapeAvg){
+        Double v ;
+        dealCellSM(row.getCell(1),i+""); //楼层
+        dealCellSM(row.getCell(2),floorH[i-1].intValue()+"");
+        dealCellSM(row.getCell(3),Util.getPrecisionString(forceAvg.get(i),0));
+        dealCellSM(row.getCell(4),Util.getPrecisionString(shapeAvg.get(i),2));
+        dealCellSM(row.getCell(5),Util.getPrecisionString(Double.valueOf(row.getCell(3).getText())/Double.valueOf(row.getCell(4).getText()),0));
+
+        v = 0.4 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Double.valueOf(row.getCell(8).getText())/(600 * (floorH[i-1] - 600));
+        dealCellSM(row.getCell(9),Util.getPrecisionString(v,0));
+
+        v = 3 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Math.pow(Double.valueOf(row.getCell(8).getText()),3) /(12000 * Math.pow(((floorH[i-1] -600)/2),3));
+        dealCellSM(row.getCell(10),Util.getPrecisionString(v,0));
+
+        v = 1 / ( ( 1 / Double.valueOf(row.getCell(9).getText())) + ( 1 / Double.valueOf(row.getCell(10).getText())));
+        dealCellSM(row.getCell(11),Util.getPrecisionString(v,0));
+        v = Double.valueOf(row.getCell(11).getText()) / 2;
+        dealCellSM(row.getCell(12),Util.getPrecisionString(v,0));
+
+        v = 1 / ( ( 1 / Double.valueOf(row.getCell(5).getText())) + ( 1 / Double.valueOf(row.getCell(12).getText())));
+        dealCellSM(row.getCell(14),Util.getPrecisionString(v,0));
+
+        v = 1000 * Double.valueOf(row.getCell(14).getText()) *(
+                (Math.pow(floorH[i-1],3)/( Double.valueOf(row.getCell(13).getText()) * Math.pow(Double.valueOf(row.getCell(16).getText()),3) )) +
+                        (1.2 * floorH[i-1] / (0.4 * Double.valueOf(row.getCell(13).getText()) * Double.valueOf(row.getCell(16).getText()))));
+        dealCellSM(row.getCell(15),Util.getPrecisionString(v,0));
+
+        v = Double.valueOf(row.getCell(13).getText()) * 0.4 * Double.valueOf(row.getCell(16).getText()) * Double.valueOf(row.getCell(15).getText()) / (1200 * floorH[i-1]);
+        dealCellSM(row.getCell(17),Util.getPrecisionString(v,2));
+
+        v = 12 * Double.valueOf(row.getCell(13).getText()) * Double.valueOf(row.getCell(15).getText()) * Math.pow(Double.valueOf(row.getCell(16).getText()),3) / (12000 * Math.pow(floorH[i-1],3));
+        dealCellSM(row.getCell(18),Util.getPrecisionString(v,2));
+
+        v = 1 / ( ( 1 / Double.valueOf(row.getCell(17).getText())) + ( 1 / Double.valueOf(row.getCell(18).getText())));
+        dealCellSM(row.getCell(19),Util.getPrecisionString(v,2));
+
+        v = Math.abs(Double.valueOf(row.getCell(19).getText()) - Double.valueOf(row.getCell(14).getText())) / 10;
+        dealCellSM(row.getCell(20),v < 0.05 ? "满足":"不满足");
     }
 
     /**
@@ -1341,54 +1428,21 @@ public class InsertToWord {
      * 按楼层获取相应位置的数的平均数
      *
      * @param param
-     * @param tableX
-     * @param tableY
      * @return
      */
-    private static Map<Integer, Double[][]> getAvgValueGroupByFloorFromTable(Map<Integer, List<Integer>> param, XWPFTable tableX, XWPFTable tableY) {
-        Map<Integer, Double[][]> map = new HashMap<>();
-        Double[][] value;
-        List<XWPFTableRow> rowsX = tableX.getRows();
-        List<XWPFTableRow> rowsY = tableY.getRows();
-        XWPFTableRow rowX;
-        XWPFTableRow rowY;
-
-        Double valueSum1X;
-        Double valueSum2X;
-        Double valueSum1Y;
-        Double valueSum2Y;
+    private static Map<Integer, Double> getAvgValueGroupByFloorFromTable(Map<Integer, List<Integer>> param, Double[][] valueArray) {
+        Map<Integer,Double> map = new HashMap<>();
+        Double valueSum = 0d;
         List<Integer> positionList;
         for (int i = 1; i <= param.size(); i++) {
             positionList = param.get(i);
-
-            valueSum1X = 0d;
-            valueSum2X = 0d;
-            valueSum1Y = 0d;
-            valueSum2Y = 0d;
-
-            for (Integer position : positionList) {
-                rowX = rowsX.get(position + 4);
-                rowY = rowsY.get(position + 4);
-
-                for (int j = 0; j < 7; j++) {
-                    valueSum1X += Double.valueOf(rowX.getCell(j + 5).getText());
-                    valueSum2X += Double.valueOf(rowX.getCell(j + 12).getText());
-                    valueSum1Y += Double.valueOf(rowY.getCell(j + 5).getText());
-                    valueSum2Y += Double.valueOf(rowY.getCell(j + 12).getText());
-                }
+            valueSum = 0d;
+            for (Integer posi : positionList){
+               for (int k = 1; k < 8; k++){
+                   valueSum += valueArray[posi][k];
+               }
             }
-            valueSum1X = valueSum1X / positionList.size() / 7;
-            valueSum2X = valueSum2X / positionList.size() / 7;
-
-            valueSum1Y = valueSum1Y / positionList.size() / 7;
-            valueSum2Y = valueSum2Y / positionList.size() / 7;
-
-            value = new Double[2][2];
-            value[0][0] = valueSum1X;
-            value[0][1] = valueSum2X;
-            value[1][0] = valueSum1Y;
-            value[1][1] = valueSum2Y;
-            map.put(i, value);
+            map.put(i,valueSum/14.00);
         }
         return map;
     }
