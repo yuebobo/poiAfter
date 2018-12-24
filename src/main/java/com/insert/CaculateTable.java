@@ -175,6 +175,7 @@ public class CaculateTable {
         System.out.println("受剪验算 ：\n_result1_  = "+ _result1_ + "\n_lamda_ = " + _lamda_ + "\n_result3_ =  "+_result3_ );
 
 
+
         //4.比较数据，得出结论
         String result ;
         if (_result1_ > Double.valueOf(stressConditionV) && _result3_ > Double.valueOf(stressConditionV) ){
