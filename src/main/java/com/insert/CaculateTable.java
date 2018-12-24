@@ -167,6 +167,7 @@ public class CaculateTable {
         Double h0 = Double.valueOf(sectionH) - Double.valueOf(_afS);
         Double _result1_ = 0.2 * Double.valueOf(concreteGradeFck) * Double.valueOf(sectionB) * h0 / (_yre * 1000 );
         Double _lamda_ = (Double.valueOf(floorH) - Double.valueOf(_afS)) / (2 * h0);
+        _lamda_ = _lamda_ <= 3 ? _lamda_ : 3.00d;
         Double _result3_ = (((1.05 * Double.valueOf(concreteGradeFtk) * Double.valueOf(sectionB) * h0) / (_lamda_ + 1.00)) +
                             (Double.valueOf(steelGradeFyvk) * 4 * 0.25 * Math.PI * Math.pow(Double.valueOf(hoopD),2) * h0 / Double.valueOf(hoopL)) +
                             (0.056 * Double.valueOf(stressConditionP) * 1000))/ (_yre * 1000);

@@ -94,7 +94,7 @@ public class InsertToWord {
 
 //            //计算最后几个表里的值
 //            //减震器周边子结构的设计计算方法
-//            calculateTable(tables.get(29), tables.get(30), tables.get(31));
+            calculateTable(tables.get(28), tables.get(29), tables.get(30));
 
         } catch (FileNotFoundException e) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + wordPath + "没找到");

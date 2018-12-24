@@ -1,3 +1,4 @@
+com\entity\BaseDate.class
 com\excel\sheet\ExcelDamper.class
 com\insert\InsertToWord.class
 com\excel\sheet\ExcelCaculateParams.class
