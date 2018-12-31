@@ -244,7 +244,7 @@ public class InsertToWord {
             if (map.size() != floorH.length) {
                 System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$  金属阻尼器表格  CAD模型编号的楼层数量与层高表里的楼层数量不一致   $$$$$$$$$$$$$  ");
             }
-            Integer floor = floorH.length;
+            Integer floor = map.size();
 
             //每一层对应的金属阻尼器弹性时程平均出力 和	金属阻尼器弹性时程平均位移
             Map<Integer, Double> forceXAvg = getAvgValueGroupByFloorFromTable(map, forceX);
