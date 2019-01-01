@@ -811,9 +811,13 @@ public class InsertToWord {
             double[] energyArrayY = {0d, 0d, 0d, 0d, 0d, 0d, 0d};
 
             //屈服力，屈服位移，屈服刚度
-            double yieldForce;
-            double yieldDisplacement;
-            double yieldRigidity;
+            double yieldForceX;
+            double yieldDisplacementX;
+            double yieldRigidityX;
+
+            double yieldForceY;
+            double yieldDisplacementY;
+            double yieldRigidityY;
 
             int floor = Math.min(shapeX.length, forceY.length);
             floor = Math.min(floor, modelNo[0].length);
@@ -835,15 +839,19 @@ public class InsertToWord {
                 dealCellSM(row19.getCell(1), Util.getPrecisionString(forceX[floor - i - 1][0], 0));
                 dealCellSM(row20.getCell(1), Util.getPrecisionString(forceY[floor - i - 1][0], 0));
 
+                yieldDisplacementX = Double.valueOf(row19.getCell(3).getText());
+                yieldForceX = Double.valueOf(row19.getCell(2).getText());
+                yieldRigidityX = Double.valueOf(row19.getCell(4).getText());
+
+                yieldDisplacementY = Double.valueOf(row20.getCell(3).getText());
+                yieldForceY = Double.valueOf(row20.getCell(2).getText());
+                yieldRigidityY = Double.valueOf(row20.getCell(4).getText());
+
                 //数据值插入
                 for (int j = 1; j < 8; j++) {
-
-                    if (shapeX[floor - i - 1][j] > 2) {
+                    if (shapeX[floor - i - 1][j] > yieldDisplacementX) {
                         //屈服力，屈服位移，屈服刚度
-                        yieldForce = Double.valueOf(row19.getCell(2).getText());
-                        yieldDisplacement = Double.valueOf(row19.getCell(3).getText());
-                        yieldRigidity = Double.valueOf(row19.getCell(4).getText());
-                        energyX = 4 * yieldForce * (shapeX[floor - i - 1][j] - yieldDisplacement) * (1 - yieldRigidity);
+                        energyX = 4 * yieldForceX * (Util.getPrecisionDouble(shapeX[floor - i - 1][j].toString(),2) - yieldDisplacementX) * (1 - yieldRigidityX);
                     } else {
                         energyX = 0D;
                     }
@@ -851,21 +859,18 @@ public class InsertToWord {
 
                     dealCellSM(row19.getCell(j + 4), Util.getPrecisionString(forceX[floor - i - 1][j], 0));
                     dealCellSM(row19.getCell(j + 11), Util.getPrecisionString(shapeX[floor - i - 1][j], 2));
-                    dealCellSM(row19.getCell(j + 19), Util.getPrecisionString(energyX, 0));
+                    dealCellSM(row19.getCell(j + 18), Util.getPrecisionString(energyX, 0));
 
-                    if (shapeY[floor - i - 1][j] > 2) {
+                    if (shapeY[floor - i - 1][j] > yieldDisplacementY) {
                         //屈服力，屈服位移，屈服刚度
-                        yieldForce = Double.valueOf(row20.getCell(2).getText());
-                        yieldDisplacement = Double.valueOf(row20.getCell(3).getText());
-                        yieldRigidity = Double.valueOf(row20.getCell(4).getText());
-                        energyY = 4 * yieldForce * (shapeY[floor - i - 1][j] - yieldDisplacement) * (1 - yieldRigidity);
+                        energyY = 4 * yieldForceY * (Util.getPrecisionDouble(shapeY[floor - i - 1][j].toString(),2) - yieldDisplacementY) * (1 - yieldRigidityY);
                     } else {
                         energyY = 0D;
                     }
                     energyArrayY[j - 1] += energyY;
                     dealCellSM(row20.getCell(j + 4), Util.getPrecisionString(forceY[floor - i - 1][j], 0));
                     dealCellSM(row20.getCell(j + 11), Util.getPrecisionString(shapeY[floor - i - 1][j], 2));
-                    dealCellSM(row20.getCell(j + 19), Util.getPrecisionString(energyY, 0));
+                    dealCellSM(row20.getCell(j + 18), Util.getPrecisionString(energyY, 0));
                 }
             }
             //移除模板行
