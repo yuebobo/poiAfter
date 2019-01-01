@@ -319,7 +319,8 @@ public class InsertToWord {
         v = 1 / ( ( 1 / Double.valueOf(row.getCell(17).getText())) + ( 1 / Double.valueOf(row.getCell(18).getText())));
         dealCellSM(row.getCell(19),Util.getPrecisionString(v,2));
 
-        v = Math.abs(Double.valueOf(row.getCell(19).getText()) - Double.valueOf(row.getCell(14).getText())) / 10;
+        v = Math.abs(Double.valueOf(row.getCell(19).getText()) - Double.valueOf(row.getCell(14).getText()))
+                / Math.max(Double.valueOf(row.getCell(19).getText()) , Double.valueOf(row.getCell(14).getText()));
         dealCellSM(row.getCell(20),v < 0.05 ? "满足":"不满足");
     }
 
