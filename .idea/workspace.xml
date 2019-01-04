@@ -4,6 +4,7 @@
     <list default="true" id="1228a31f-7b8c-4256-9bf6-cb7d666e89c6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java" afterPath="$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/util/Util.java" afterPath="$PROJECT_DIR$/src/main/java/com/util/Util.java" />
       <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" />
       <change beforePath="$PROJECT_DIR$/target/poiAfter-1.0-SNAPSHOT-jar-with-dependencies.jar" afterPath="$PROJECT_DIR$/target/poiAfter-1.0-SNAPSHOT-jar-with-dependencies.jar" />
       <change beforePath="$PROJECT_DIR$/target/poiAfter-1.0-SNAPSHOT.jar" afterPath="$PROJECT_DIR$/target/poiAfter-1.0-SNAPSHOT.jar" />
@@ -25,8 +26,8 @@
       <file leaf-file-name="InsertToWord.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="310" column="40" lean-forward="false" selection-start-line="310" selection-start-column="40" selection-end-line="310" selection-end-column="40" />
+            <state relative-caret-position="173">
+              <caret line="1137" column="0" lean-forward="false" selection-start-line="1137" selection-start-column="0" selection-end-line="1137" selection-end-column="0" />
               <folding>
                 <element signature="method#insertModelCompare#0;class#InsertToWord#0" expanded="false" />
                 <element signature="method#insertEarthquakeWaveInfo#0;class#InsertToWord#0" expanded="false" />
@@ -35,14 +36,22 @@
                 <element signature="method#insertElasticPropertyOfBaseEarthquake#0;class#InsertToWord#0" expanded="false" />
                 <element signature="method#insertAnnexDamperRatio#0;class#InsertToWord#0" expanded="false" />
                 <element signature="method#insertDamperFloorRatio#0;class#InsertToWord#0" expanded="false" />
-                <element signature="method#insertFloorDisplaceAngle#0;class#InsertToWord#0" expanded="false" />
                 <element signature="method#getModelNo1#0;class#InsertToWord#0" expanded="false" />
-                <element signature="e#65956#65957#0" expanded="true" />
-                <element signature="e#65996#65997#0" expanded="true" />
+                <element signature="e#72453#72454#0" expanded="true" />
+                <element signature="e#72493#72494#0" expanded="true" />
                 <element signature="method#dealCell#0;class#InsertToWord#0" expanded="false" />
                 <element signature="method#getName#0;class#InsertToWord#0" expanded="false" />
-                <element signature="method#getName1#0;class#InsertToWord#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Math.java" pinned="false" current-in-tab="false">
+        <entry file="jar://$USER_HOME$/Documents/java/jdk1.8.0_60/src.zip!/java/lang/Math.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="732">
+              <caret line="1312" column="25" lean-forward="false" selection-start-line="1312" selection-start-column="25" selection-end-line="1312" selection-end-column="25" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -50,8 +59,8 @@
       <file leaf-file-name="Util.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/util/Util.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="75" column="25" lean-forward="false" selection-start-line="75" selection-start-column="25" selection-end-line="75" selection-end-column="25" />
+            <state relative-caret-position="153">
+              <caret line="333" column="36" lean-forward="true" selection-start-line="333" selection-start-column="36" selection-end-line="333" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -60,7 +69,7 @@
       <file leaf-file-name="CaculateTable.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/insert/CaculateTable.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
+            <state relative-caret-position="4920">
               <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
               <folding />
             </state>
@@ -80,8 +89,8 @@
       <file leaf-file-name="ExcelCaculateParams.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/excel/sheet/ExcelCaculateParams.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3450">
-              <caret line="125" column="30" lean-forward="false" selection-start-line="125" selection-start-column="30" selection-end-line="125" selection-end-column="30" />
+            <state relative-caret-position="266">
+              <caret line="448" column="62" lean-forward="true" selection-start-line="448" selection-start-column="62" selection-end-line="448" selection-end-column="62" />
               <folding />
             </state>
           </provider>
@@ -90,8 +99,8 @@
       <file leaf-file-name="GetExcelValue.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/file/GetExcelValue.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15090">
-              <caret line="514" column="72" lean-forward="false" selection-start-line="514" selection-start-column="72" selection-end-line="514" selection-end-column="72" />
+            <state relative-caret-position="930">
+              <caret line="42" column="59" lean-forward="false" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -131,6 +140,7 @@
       <find>getAvgValueGroupByFloorFromTable</find>
       <find>金属阻尼器表格  CAD模型编号的楼层数量与层高表里的楼层数量不一致</find>
       <find>CAD编号数量与原始表格里的数据的数量不一致</find>
+      <find>减震的结构层间位移角</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -153,9 +163,9 @@
         <option value="$PROJECT_DIR$/src/main/java/com/entity/Constants.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/excel/sheet/ExcelCaculateParams.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/test/GetExcelTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/util/Util.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/file/GetExcelValue.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/insert/CaculateTable.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/util/Util.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java" />
       </list>
     </option>
@@ -174,8 +184,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-304" />
-    <option name="y" value="256" />
+    <option name="x" value="-9" />
+    <option name="y" value="-9" />
     <option name="width" value="1934" />
     <option name="height" value="1058" />
   </component>
@@ -195,10 +205,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="AndroidView" />
-      <pane id="Scratches" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -250,6 +256,10 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -437,16 +447,17 @@
       <workItem from="1545658093596" duration="670000" />
       <workItem from="1546159861545" duration="218000" />
       <workItem from="1546160091667" duration="1398000" />
-      <workItem from="1546259921744" duration="7403000" />
+      <workItem from="1546259921744" duration="8110000" />
+      <workItem from="1546576099640" duration="773000" />
+      <workItem from="1546614787357" duration="5481000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="96680000" />
+    <option name="totallyTimeSpent" value="103641000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -454,14 +465,15 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3831243" sideWeight="0.50214595" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3432155" sideWeight="0.50429183" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6054732" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16148068" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16469957" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -469,11 +481,10 @@
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3299356" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.55188143" sideWeight="0.49785408" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.7582668" sideWeight="0.49570817" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -488,29 +499,40 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java</url>
-          <line>432</line>
+          <line>434</line>
           <properties />
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java</url>
-          <line>538</line>
+          <line>540</line>
           <properties />
           <option name="timeStamp" value="23" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java</url>
+          <line>1073</line>
+          <properties />
+          <option name="timeStamp" value="104" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java</url>
+          <line>1193</line>
+          <properties />
+          <option name="timeStamp" value="107" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java</url>
+          <line>1417</line>
+          <properties />
+          <option name="timeStamp" value="111" />
+        </line-breakpoint>
       </breakpoints>
-      <option name="time" value="98" />
+      <option name="time" value="112" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/file/GetExcelValue.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8550">
-          <caret line="294" column="31" lean-forward="false" selection-start-line="294" selection-start-column="31" selection-end-line="294" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/util/Util.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1320">
@@ -544,13 +566,11 @@
             <element signature="method#insertElasticPropertyOfBaseEarthquake#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertAnnexDamperRatio#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertDamperFloorRatio#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#insertFloorDisplaceAngle#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getModelNo1#0;class#InsertToWord#0" expanded="false" />
-            <element signature="e#65956#65957#0" expanded="true" />
-            <element signature="e#65996#65997#0" expanded="true" />
+            <element signature="e#72453#72454#0" expanded="true" />
+            <element signature="e#72493#72494#0" expanded="true" />
             <element signature="method#dealCell#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getName#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#getName1#0;class#InsertToWord#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -602,13 +622,11 @@
             <element signature="method#insertElasticPropertyOfBaseEarthquake#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertAnnexDamperRatio#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertDamperFloorRatio#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#insertFloorDisplaceAngle#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getModelNo1#0;class#InsertToWord#0" expanded="false" />
-            <element signature="e#65956#65957#0" expanded="true" />
-            <element signature="e#65996#65997#0" expanded="true" />
+            <element signature="e#72453#72454#0" expanded="true" />
+            <element signature="e#72493#72494#0" expanded="true" />
             <element signature="method#dealCell#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getName#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#getName1#0;class#InsertToWord#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -653,13 +671,11 @@
             <element signature="method#insertElasticPropertyOfBaseEarthquake#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertAnnexDamperRatio#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertDamperFloorRatio#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#insertFloorDisplaceAngle#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getModelNo1#0;class#InsertToWord#0" expanded="false" />
-            <element signature="e#65956#65957#0" expanded="true" />
-            <element signature="e#65996#65997#0" expanded="true" />
+            <element signature="e#72453#72454#0" expanded="true" />
+            <element signature="e#72493#72494#0" expanded="true" />
             <element signature="method#dealCell#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getName#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#getName1#0;class#InsertToWord#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -704,13 +720,11 @@
             <element signature="method#insertElasticPropertyOfBaseEarthquake#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertAnnexDamperRatio#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertDamperFloorRatio#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#insertFloorDisplaceAngle#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getModelNo1#0;class#InsertToWord#0" expanded="false" />
-            <element signature="e#65956#65957#0" expanded="true" />
-            <element signature="e#65996#65997#0" expanded="true" />
+            <element signature="e#72453#72454#0" expanded="true" />
+            <element signature="e#72493#72494#0" expanded="true" />
             <element signature="method#dealCell#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getName#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#getName1#0;class#InsertToWord#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -868,42 +882,50 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/excel/sheet/ExcelCaculateParams.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/insert/CaculateTable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3450">
-          <caret line="125" column="30" lean-forward="false" selection-start-line="125" selection-start-column="30" selection-end-line="125" selection-end-column="30" />
+        <state relative-caret-position="4920">
+          <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/file/GetExcelValue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15090">
-          <caret line="514" column="72" lean-forward="false" selection-start-line="514" selection-start-column="72" selection-end-line="514" selection-end-column="72" />
+        <state relative-caret-position="930">
+          <caret line="42" column="59" lean-forward="false" selection-start-line="42" selection-start-column="59" selection-end-line="42" selection-end-column="59" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/insert/CaculateTable.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/excel/sheet/ExcelCaculateParams.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+        <state relative-caret-position="266">
+          <caret line="448" column="62" lean-forward="true" selection-start-line="448" selection-start-column="62" selection-end-line="448" selection-end-column="62" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/util/Util.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="75" column="25" lean-forward="false" selection-start-line="75" selection-start-column="25" selection-end-line="75" selection-end-column="25" />
+        <state relative-caret-position="153">
+          <caret line="333" column="36" lean-forward="true" selection-start-line="333" selection-start-column="36" selection-end-line="333" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/Documents/java/jdk1.8.0_60/src.zip!/java/lang/Math.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="732">
+          <caret line="1312" column="25" lean-forward="false" selection-start-line="1312" selection-start-column="25" selection-end-line="1312" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/insert/InsertToWord.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="310" column="40" lean-forward="false" selection-start-line="310" selection-start-column="40" selection-end-line="310" selection-end-column="40" />
+        <state relative-caret-position="173">
+          <caret line="1137" column="0" lean-forward="false" selection-start-line="1137" selection-start-column="0" selection-end-line="1137" selection-end-column="0" />
           <folding>
             <element signature="method#insertModelCompare#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertEarthquakeWaveInfo#0;class#InsertToWord#0" expanded="false" />
@@ -912,13 +934,11 @@
             <element signature="method#insertElasticPropertyOfBaseEarthquake#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertAnnexDamperRatio#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#insertDamperFloorRatio#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#insertFloorDisplaceAngle#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getModelNo1#0;class#InsertToWord#0" expanded="false" />
-            <element signature="e#65956#65957#0" expanded="true" />
-            <element signature="e#65996#65997#0" expanded="true" />
+            <element signature="e#72453#72454#0" expanded="true" />
+            <element signature="e#72493#72494#0" expanded="true" />
             <element signature="method#dealCell#0;class#InsertToWord#0" expanded="false" />
             <element signature="method#getName#0;class#InsertToWord#0" expanded="false" />
-            <element signature="method#getName1#0;class#InsertToWord#0" expanded="false" />
           </folding>
         </state>
       </provider>

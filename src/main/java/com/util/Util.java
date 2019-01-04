@@ -332,14 +332,14 @@ public class Util {
      * @return
      */
     public static Integer[] getValueCol(Double[][] arrays) {
-        Integer[] valueCol = new Integer[3];
+        Integer[] valueCol = new Integer[7];
         double zero = 0d;
         int count = 0;
         for (int i = 0; i < arrays.length; i++) {
             for (int j = 1; j < arrays[i].length; j++) {
                 if (zero != arrays[i][j]) {
                     valueCol[count] = j;
-                    if (count++ == 2) {
+                    if (count++ == 6) {
                         return valueCol;
                     }
                 }
@@ -349,14 +349,14 @@ public class Util {
     }
 
     public static Integer[] getValueCol(String[][] arrays) {
-        Integer[] valueCol = new Integer[3];
+        Integer[] valueCol = new Integer[7];
         double zero = 0d;
         int count = 0;
         for (int i = 0; i < arrays.length; i++) {
             for (int j = 0; j < arrays[i].length; j++) {
                 if (zero != Double.valueOf(arrays[i][j])) {
                     valueCol[count] = j;
-                    if (count++ == 2) {
+                    if (count++ == 6) {
                         return valueCol;
                     }
                 }

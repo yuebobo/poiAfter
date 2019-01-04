@@ -131,7 +131,7 @@ public class InsertToWord {
      *
      * @param table4
      */
-    private static void insertCADModelNo(XWPFTable table4){
+    private static void insertCADModelNo(XWPFTable table4) {
         System.out.println("=================================================");
         System.out.println("\n处理 CAD模型编号表（SAP模型中编号）");
 
@@ -145,57 +145,59 @@ public class InsertToWord {
         String value;
         XWPFTableRow row;
         int countX = 0;
-        for (int i = 0 ; flage ; i++){
+        for (int i = 0; flage; i++) {
             flage = false;
 
-            for (int k = 0; k < x_CAD.length; k++){
+            for (int k = 0; k < x_CAD.length; k++) {
                 try {
-                  value =  x_CAD[k][i];
-                  if (null != value && !"".equals(value)){
-                     row = table4.createRow();
-                     dealCellSM(row.getCell(0),value);
-                     dealCellSM(row.getCell(1),++countX+"");
-                     listX.add(value);
-                      flage = true;
-                  }
-                }catch (Exception e){ }
+                    value = x_CAD[k][i];
+                    if (null != value && !"".equals(value)) {
+                        row = table4.createRow();
+                        dealCellSM(row.getCell(0), value);
+                        dealCellSM(row.getCell(1), ++countX + "");
+                        listX.add(value);
+                        flage = true;
+                    }
+                } catch (Exception e) {
+                }
             }
         }
         //y方向
         int countY = 0;
         int count = countX;
         flage = true;
-        for (int i = 0 ; flage ; i++){
+        for (int i = 0; flage; i++) {
             flage = false;
-            for (int k = 0; k < y_CAD.length; k++){
+            for (int k = 0; k < y_CAD.length; k++) {
                 try {
-                    value =  y_CAD[k][i];
-                    if (null != value && !"".equals(value)){
+                    value = y_CAD[k][i];
+                    if (null != value && !"".equals(value)) {
                         row = table4.getRow(countY + 1);
-                        dealCellSM(row.getCell(2),value);
-                        dealCellSM(row.getCell(3),++count+"");
+                        dealCellSM(row.getCell(2), value);
+                        dealCellSM(row.getCell(3), ++count + "");
                         countY++;
                         listY.add(value);
-                        if (countY > countX){
+                        if (countY > countX) {
                             System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
                             flage = false;
                             break;
                         }
                         flage = true;
                     }
-                }catch (Exception e){ }
+                } catch (Exception e) {
+                }
             }
         }
-        if (countX != countX){
+        if (countX != countX) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
         }
         //CAD模型中的编号
-        modelNo = new String[2][Math.max(listX.size(),listY.size())];
+        modelNo = new String[2][Math.max(listX.size(), listY.size())];
         listX.toArray(modelNo[0]);
         listY.toArray(modelNo[1]);
         //SAP模型中编号
         SPANo = new int[countX + countY];
-        for (int i = 0; i < SPANo.length ; ){
+        for (int i = 0; i < SPANo.length; ) {
             SPANo[i] = ++i;
         }
         System.out.println("============== CAD 编号 ====================");
@@ -257,71 +259,71 @@ public class InsertToWord {
             //新加入的行都插入到第六行
             //最后模板行在数据行的最下边，数据插入完成将其删除
             XWPFTableRow row500 = table5.getRow(4);
-            XWPFTableRow row ;
+            XWPFTableRow row;
             // Y方向
             for (Integer i = floor; i >= 1; i--) {
-                for (int k = y_CAD[i-1].length - 1;k >= 0; k--){
+                for (int k = y_CAD[i - 1].length - 1; k >= 0; k--) {
                     table5.addRow(row500, 5);
                     row = table5.getRow(5);
-                    dealCellSM(row.getCell(0),y_CAD[i-1][k]);
-                    insertTable(row,i,floorH, forceYAvg, shapeYAvg);
+                    dealCellSM(row.getCell(0), y_CAD[i - 1][k]);
+                    insertTable(row, i, floorH, forceYAvg, shapeYAvg);
                 }
             }
             //X方向
             for (Integer i = floor; i >= 1; i--) {
-                for (int k = x_CAD[i-1].length - 1;k >= 0; k--){
+                for (int k = x_CAD[i - 1].length - 1; k >= 0; k--) {
                     table5.addRow(row500, 5);
                     row = table5.getRow(5);
-                    dealCellSM(row.getCell(0),x_CAD[i-1][k]);
-                    insertTable(row,i,floorH, forceXAvg, shapeXAvg);
+                    dealCellSM(row.getCell(0), x_CAD[i - 1][k]);
+                    insertTable(row, i, floorH, forceXAvg, shapeXAvg);
                 }
             }
-            table5.removeRow(table5.getRows().size()-1);
+            table5.removeRow(table5.getRows().size() - 1);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$金属阻尼器表格的处理时发生异常");
         }
     }
 
-    private static void insertTable(XWPFTableRow row,int i,Double[] floorH,Map<Integer, Double> forceAvg,Map<Integer, Double> shapeAvg){
-        Double v ;
-        dealCellSM(row.getCell(1),i+""); //楼层
-        dealCellSM(row.getCell(2),floorH[i-1].intValue()+"");
-        dealCellSM(row.getCell(3),Util.getPrecisionString(forceAvg.get(i),0));
-        dealCellSM(row.getCell(4),Util.getPrecisionString(shapeAvg.get(i),2));
-        dealCellSM(row.getCell(5),Util.getPrecisionString(Double.valueOf(row.getCell(3).getText())/Double.valueOf(row.getCell(4).getText()),0));
+    private static void insertTable(XWPFTableRow row, int i, Double[] floorH, Map<Integer, Double> forceAvg, Map<Integer, Double> shapeAvg) {
+        Double v;
+        dealCellSM(row.getCell(1), i + ""); //楼层
+        dealCellSM(row.getCell(2), floorH[i - 1].intValue() + "");
+        dealCellSM(row.getCell(3), Util.getPrecisionString(forceAvg.get(i), 0));
+        dealCellSM(row.getCell(4), Util.getPrecisionString(shapeAvg.get(i), 2));
+        dealCellSM(row.getCell(5), Util.getPrecisionString(Double.valueOf(row.getCell(3).getText()) / Double.valueOf(row.getCell(4).getText()), 0));
 
-        v = 0.4 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Double.valueOf(row.getCell(8).getText())/(600 * (floorH[i-1] - 600));
-        dealCellSM(row.getCell(9),Util.getPrecisionString(v,0));
+        v = 0.4 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Double.valueOf(row.getCell(8).getText()) / (600 * (floorH[i - 1] - 600));
+        dealCellSM(row.getCell(9), Util.getPrecisionString(v, 0));
 
-        v = 3 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Math.pow(Double.valueOf(row.getCell(8).getText()),3) /(12000 * Math.pow(((floorH[i-1] -600)/2),3));
-        dealCellSM(row.getCell(10),Util.getPrecisionString(v,0));
+        v = 3 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Math.pow(Double.valueOf(row.getCell(8).getText()), 3) / (12000 * Math.pow(((floorH[i - 1] - 600) / 2), 3));
+        dealCellSM(row.getCell(10), Util.getPrecisionString(v, 0));
 
-        v = 1 / ( ( 1 / Double.valueOf(row.getCell(9).getText())) + ( 1 / Double.valueOf(row.getCell(10).getText())));
-        dealCellSM(row.getCell(11),Util.getPrecisionString(v,0));
+        v = 1 / ((1 / Double.valueOf(row.getCell(9).getText())) + (1 / Double.valueOf(row.getCell(10).getText())));
+        dealCellSM(row.getCell(11), Util.getPrecisionString(v, 0));
         v = Double.valueOf(row.getCell(11).getText()) / 2;
-        dealCellSM(row.getCell(12),Util.getPrecisionString(v,0));
+        dealCellSM(row.getCell(12), Util.getPrecisionString(v, 0));
 
-        v = 1 / ( ( 1 / Double.valueOf(row.getCell(5).getText())) + ( 1 / Double.valueOf(row.getCell(12).getText())));
-        dealCellSM(row.getCell(14),Util.getPrecisionString(v,0));
+        v = 1 / ((1 / Double.valueOf(row.getCell(5).getText())) + (1 / Double.valueOf(row.getCell(12).getText())));
+        dealCellSM(row.getCell(14), Util.getPrecisionString(v, 0));
 
-        v = 1000 * Double.valueOf(row.getCell(14).getText()) *(
-                (Math.pow(floorH[i-1],3)/( Double.valueOf(row.getCell(13).getText()) * Math.pow(Double.valueOf(row.getCell(16).getText()),3) )) +
-                        (1.2 * floorH[i-1] / (0.4 * Double.valueOf(row.getCell(13).getText()) * Double.valueOf(row.getCell(16).getText()))));
-        dealCellSM(row.getCell(15),Util.getPrecisionString(v,0));
+        v = 1000 * Double.valueOf(row.getCell(14).getText()) * (
+                (Math.pow(floorH[i - 1], 3) / (Double.valueOf(row.getCell(13).getText()) * Math.pow(Double.valueOf(row.getCell(16).getText()), 3))) +
+                        (1.2 * floorH[i - 1] / (0.4 * Double.valueOf(row.getCell(13).getText()) * Double.valueOf(row.getCell(16).getText()))));
+        dealCellSM(row.getCell(15), Util.getPrecisionString(v, 0));
 
-        v = Double.valueOf(row.getCell(13).getText()) * 0.4 * Double.valueOf(row.getCell(16).getText()) * Double.valueOf(row.getCell(15).getText()) / (1200 * floorH[i-1]);
-        dealCellSM(row.getCell(17),Util.getPrecisionString(v,2));
+        v = Double.valueOf(row.getCell(13).getText()) * 0.4 * Double.valueOf(row.getCell(16).getText()) * Double.valueOf(row.getCell(15).getText()) / (1200 * floorH[i - 1]);
+        dealCellSM(row.getCell(17), Util.getPrecisionString(v, 2));
 
-        v = 12 * Double.valueOf(row.getCell(13).getText()) * Double.valueOf(row.getCell(15).getText()) * Math.pow(Double.valueOf(row.getCell(16).getText()),3) / (12000 * Math.pow(floorH[i-1],3));
-        dealCellSM(row.getCell(18),Util.getPrecisionString(v,2));
+        v = 12 * Double.valueOf(row.getCell(13).getText()) * Double.valueOf(row.getCell(15).getText()) * Math.pow(Double.valueOf(row.getCell(16).getText()), 3) / (12000 * Math.pow(floorH[i - 1], 3));
+        dealCellSM(row.getCell(18), Util.getPrecisionString(v, 2));
 
-        v = 1 / ( ( 1 / Double.valueOf(row.getCell(17).getText())) + ( 1 / Double.valueOf(row.getCell(18).getText())));
-        dealCellSM(row.getCell(19),Util.getPrecisionString(v,2));
+        v = 1 / ((1 / Double.valueOf(row.getCell(17).getText())) + (1 / Double.valueOf(row.getCell(18).getText())));
+        dealCellSM(row.getCell(19), Util.getPrecisionString(v, 2));
 
         v = Math.abs(Double.valueOf(row.getCell(19).getText()) - Double.valueOf(row.getCell(14).getText()))
-                / Math.max(Double.valueOf(row.getCell(19).getText()) , Double.valueOf(row.getCell(14).getText()));
-        dealCellSM(row.getCell(20),v < 0.05 ? "满足":"不满足");
+                / Math.max(Double.valueOf(row.getCell(19).getText()), Double.valueOf(row.getCell(14).getText()));
+        dealCellSM(row.getCell(20), v < 0.05 ? "满足" : "不满足");
     }
 
     /**
@@ -357,7 +359,7 @@ public class InsertToWord {
             String qualityOfStructure1 = data.QUALITY;
             //
 //            List[] fxFy = (List[]) map.get(3);
-              List[] fxFy = data.FX_FY;
+            List[] fxFy = data.FX_FY;
 
             //5.地震剪力对比Fx    （表1   PKPM   X）
             List<String> fx = fxFy[0];
@@ -852,7 +854,7 @@ public class InsertToWord {
                 for (int j = 1; j < 8; j++) {
                     if (shapeX[floor - i - 1][j] > yieldDisplacementX) {
                         //屈服力，屈服位移，屈服刚度
-                        energyX = 4 * yieldForceX * (Util.getPrecisionDouble(shapeX[floor - i - 1][j].toString(),2) - yieldDisplacementX) * (1 - yieldRigidityX);
+                        energyX = 4 * yieldForceX * (Util.getPrecisionDouble(shapeX[floor - i - 1][j].toString(), 2) - yieldDisplacementX) * (1 - yieldRigidityX);
                     } else {
                         energyX = 0D;
                     }
@@ -864,7 +866,7 @@ public class InsertToWord {
 
                     if (shapeY[floor - i - 1][j] > yieldDisplacementY) {
                         //屈服力，屈服位移，屈服刚度
-                        energyY = 4 * yieldForceY * (Util.getPrecisionDouble(shapeY[floor - i - 1][j].toString(),2) - yieldDisplacementY) * (1 - yieldRigidityY);
+                        energyY = 4 * yieldForceY * (Util.getPrecisionDouble(shapeY[floor - i - 1][j].toString(), 2) - yieldDisplacementY) * (1 - yieldRigidityY);
                     } else {
                         energyY = 0D;
                     }
@@ -1076,14 +1078,14 @@ public class InsertToWord {
             //更改表头的有效列的名称
             XWPFTableRow row23 = table23.getRow(2);
             XWPFTableRow row24 = table24.getRow(2);
-            String name = null;
-            for (int i = 0; i < 3; i++) {
-                name = getName1(valueCol, i);
-                dealCellSM(row23.getCell(1 + i), name);
-                dealCellSM(row23.getCell(5 + i), name);
-                dealCellSM(row24.getCell(1 + i), name);
-                dealCellSM(row24.getCell(5 + i), name);
-            }
+//            String name = null;
+//            for (int i = 0; i < 7; i++) {
+//                name = getName1(valueCol, i);
+//                dealCellSM(row23.getCell(1 + i), name);
+//                dealCellSM(row23.getCell(9 + i), name);
+//                dealCellSM(row24.getCell(1 + i), name);
+//                dealCellSM(row24.getCell(9 + i), name);
+//            }
 
 
             int floor = Math.min(displaceAngleNot[0].length, displaceAngle[0].length);
@@ -1120,23 +1122,47 @@ public class InsertToWord {
                 dealCellSM(row24.getCell(0), String.valueOf(i + 1));
 
                 //数据值插入
-                for (int j = 0; j < 3; j++) {
+                for (int j = 0; j < 7; j++) {
                     //非减震结构层间位移 x与y
                     double ddd = Double.valueOf(displaceAngleNot[0][i][valueCol[j]]);
                     double sss = floorh[i] / Double.valueOf(displaceAngleNot[0][i][valueCol[j]]);
                     dealCellSM(row23.getCell(j + 1), Util.getPrecisionString(floorh[i] / Double.valueOf(displaceAngleNot[0][i][valueCol[j]]), 0));
                     dealCellSM(row24.getCell(j + 1), Util.getPrecisionString(floorh[i] / Double.valueOf(displaceAngleNot[1][i][valueCol[j]]), 0));
                     //减震结构层间位移 x与y
-                    dealCellSM(row23.getCell(j + 5), Util.getPrecisionString(floorh[i] / Double.valueOf(displaceAngle[0][i][valueCol[j]]), 0));
-                    dealCellSM(row24.getCell(j + 5), Util.getPrecisionString(floorh[i] / Double.valueOf(displaceAngle[1][i][valueCol[j]]), 0));
+                    dealCellSM(row23.getCell(j + 9), Util.getPrecisionString(floorh[i] / Double.valueOf(displaceAngle[0][i][valueCol[j]]), 0));
+                    dealCellSM(row24.getCell(j + 9), Util.getPrecisionString(floorh[i] / Double.valueOf(displaceAngle[1][i][valueCol[j]]), 0));
                 }
 
                 //计算包络值
-                //包络值为该行的  这三个数值的最小值
-                envelopeX = floorh[i] / Math.max(Double.valueOf(displaceAngle[0][i][valueCol[0]]), Math.max(Double.valueOf(displaceAngle[0][i][valueCol[1]]), Double.valueOf(displaceAngle[0][i][valueCol[2]])));
-                envelopeXNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[0]]), Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[1]]), Double.valueOf(displaceAngleNot[0][i][valueCol[2]])));
-                envelopeY = floorh[i] / Math.max(Double.valueOf(displaceAngle[1][i][valueCol[0]]), Math.max(Double.valueOf(displaceAngle[1][i][valueCol[1]]), Double.valueOf(displaceAngle[1][i][valueCol[2]])));
-                envelopeYNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[0]]), Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[1]]), Double.valueOf(displaceAngleNot[1][i][valueCol[2]])));
+                //包络值为该行的  这7个数值的最小值
+                envelopeX = floorh[i] / Math.max(Double.valueOf(displaceAngle[0][i][valueCol[0]]),
+                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[1]]),
+                                Math.max(Double.valueOf(displaceAngle[0][i][valueCol[2]]),
+                                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[3]]),
+                                                Math.max(Double.valueOf(displaceAngle[0][i][valueCol[4]]),
+                                                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[5]]),
+                                                                Double.valueOf(displaceAngle[0][i][valueCol[6]])))))));
+                envelopeXNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[0]]),
+                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[1]]),
+                                Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[2]]),
+                                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[3]]),
+                                                Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[4]]),
+                                                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[5]]),
+                                                                Double.valueOf(displaceAngleNot[0][i][valueCol[6]])))))));
+                envelopeY = floorh[i] / Math.max(Double.valueOf(displaceAngle[1][i][valueCol[0]]),
+                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[1]]),
+                                Math.max(Double.valueOf(displaceAngle[1][i][valueCol[2]]),
+                                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[3]]),
+                                                Math.max(Double.valueOf(displaceAngle[1][i][valueCol[4]]),
+                                                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[5]]),
+                                                                Double.valueOf(displaceAngle[1][i][valueCol[6]])))))));
+                envelopeYNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[0]]),
+                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[1]]),
+                                Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[2]]),
+                                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[3]]),
+                                                Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[4]]),
+                                                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[5]]),
+                                                                Double.valueOf(displaceAngleNot[1][i][valueCol[6]])))))));
 
                 //获取包络值列的最小值
                 minEnvelopeX = minEnvelopeX == null ? envelopeX : Math.min(minEnvelopeX, envelopeX);
@@ -1145,10 +1171,10 @@ public class InsertToWord {
                 minEnvelopeYNot = minEnvelopeYNot == null ? envelopeYNot : Math.min(minEnvelopeYNot, envelopeYNot);
 
                 //插入包络值
-                dealCellSM(row23.getCell(4), Util.getPrecisionString(envelopeXNot, 0));
-                dealCellSM(row23.getCell(8), Util.getPrecisionString(envelopeX, 0));
-                dealCellSM(row24.getCell(4), Util.getPrecisionString(envelopeYNot, 0));
-                dealCellSM(row24.getCell(8), Util.getPrecisionString(envelopeY, 0));
+                dealCellSM(row23.getCell(8), Util.getPrecisionString(envelopeXNot, 0));
+                dealCellSM(row23.getCell(16), Util.getPrecisionString(envelopeX, 0));
+                dealCellSM(row24.getCell(8), Util.getPrecisionString(envelopeYNot, 0));
+                dealCellSM(row24.getCell(16), Util.getPrecisionString(envelopeY, 0));
             }
             table23.removeRow(floor + 3);
             table24.removeRow(floor + 3);
@@ -1160,11 +1186,12 @@ public class InsertToWord {
             //插入最小包络值和位移比例
             dealCellSM(table23.getRow(3 + floor).getCell(1), Util.getPrecisionString(minEnvelopeXNot, 0));
             dealCellSM(table23.getRow(3 + floor).getCell(2), Util.getPrecisionString(minEnvelopeX, 0));
-            dealCellSM(table23.getRow(3 + floor + 1).getCell(1), Util.getPrecisionString(proX.toString(), 1));
+            dealCellSM(table23.getRow(3 + floor + 1).getCell(1), Util.getPrecisionString(proX.toString(), 2));
             dealCellSM(table24.getRow(3 + floor).getCell(1), Util.getPrecisionString(minEnvelopeYNot, 0));
             dealCellSM(table24.getRow(3 + floor).getCell(2), Util.getPrecisionString(minEnvelopeY, 0));
-            dealCellSM(table24.getRow(3 + floor + 1).getCell(1), Util.getPrecisionString(proY.toString(), 1));
+            dealCellSM(table24.getRow(3 + floor + 1).getCell(1), Util.getPrecisionString(proY.toString(), 2));
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理 大震下非减震和减震的结构层间位移角表发生异常");
         }
     }
@@ -1206,14 +1233,14 @@ public class InsertToWord {
             //更改表头的有效列的名称
             XWPFTableRow row25 = table25.getRow(3);
             XWPFTableRow row26 = table26.getRow(3);
-            String name = null;
-            for (int i = 0; i < 3; i++) {
-                name = getName(valueCol, i);
-                dealCellSM(row25.getCell(4 + i), name);
-                dealCellSM(row25.getCell(7 + i), name);
-                dealCellSM(row26.getCell(4 + i), name);
-                dealCellSM(row26.getCell(7 + i), name);
-            }
+//            String name = null;
+//            for (int i = 0; i < 3; i++) {
+//                name = getName(valueCol, i);
+//                dealCellSM(row25.getCell(4 + i), name);
+//                dealCellSM(row25.getCell(7 + i), name);
+//                dealCellSM(row26.getCell(4 + i), name);
+//                dealCellSM(row26.getCell(7 + i), name);
+//            }
 
 
             //表头四行，
@@ -1262,33 +1289,72 @@ public class InsertToWord {
                 dealCellSM(row25.getCell(4), Util.getPrecisionString(forceX[floor - i - 1][valueCol[0]], 0));
                 dealCellSM(row25.getCell(5), Util.getPrecisionString(forceX[floor - i - 1][valueCol[1]], 0));
                 dealCellSM(row25.getCell(6), Util.getPrecisionString(forceX[floor - i - 1][valueCol[2]], 0));
-                dealCellSM(row25.getCell(7), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[0]], 2));
-                dealCellSM(row25.getCell(8), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[1]], 2));
-                dealCellSM(row25.getCell(9), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[2]], 2));
+                dealCellSM(row25.getCell(7), Util.getPrecisionString(forceX[floor - i - 1][valueCol[3]], 0));
+                dealCellSM(row25.getCell(8), Util.getPrecisionString(forceX[floor - i - 1][valueCol[4]], 0));
+                dealCellSM(row25.getCell(9), Util.getPrecisionString(forceX[floor - i - 1][valueCol[5]], 0));
+                dealCellSM(row25.getCell(10), Util.getPrecisionString(forceX[floor - i - 1][valueCol[6]], 0));
+
+                dealCellSM(row25.getCell(11), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[0]], 2));
+                dealCellSM(row25.getCell(12), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[1]], 2));
+                dealCellSM(row25.getCell(13), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[2]], 2));
+                dealCellSM(row25.getCell(14), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[3]], 2));
+                dealCellSM(row25.getCell(15), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[4]], 2));
+                dealCellSM(row25.getCell(16), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[5]], 2));
+                dealCellSM(row25.getCell(17), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[6]], 2));
+
 
                 //y方向
                 dealCellSM(row26.getCell(4), Util.getPrecisionString(forceY[floor - i - 1][valueCol[0]], 0));
                 dealCellSM(row26.getCell(5), Util.getPrecisionString(forceY[floor - i - 1][valueCol[1]], 0));
                 dealCellSM(row26.getCell(6), Util.getPrecisionString(forceY[floor - i - 1][valueCol[2]], 0));
-                dealCellSM(row26.getCell(7), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
-                dealCellSM(row26.getCell(8), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[1]], 2));
-                dealCellSM(row26.getCell(9), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
+                dealCellSM(row26.getCell(7), Util.getPrecisionString(forceY[floor - i - 1][valueCol[3]], 0));
+                dealCellSM(row26.getCell(8), Util.getPrecisionString(forceY[floor - i - 1][valueCol[4]], 0));
+                dealCellSM(row26.getCell(9), Util.getPrecisionString(forceY[floor - i - 1][valueCol[5]], 0));
+                dealCellSM(row26.getCell(10), Util.getPrecisionString(forceY[floor - i - 1][valueCol[6]], 0));
+
+                dealCellSM(row26.getCell(11), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
+                dealCellSM(row26.getCell(12), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[1]], 2));
+                dealCellSM(row26.getCell(13), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[2]], 2));
+                dealCellSM(row26.getCell(14), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[3]], 2));
+                dealCellSM(row26.getCell(15), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[4]], 2));
+                dealCellSM(row26.getCell(16), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[5]], 2));
+                dealCellSM(row26.getCell(17), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[6]], 2));
+
+//                dealCellSM(row26.getCell(4), Util.getPrecisionString(forceY[floor - i - 1][valueCol[0]], 0));
+//                dealCellSM(row26.getCell(5), Util.getPrecisionString(forceY[floor - i - 1][valueCol[1]], 0));
+//                dealCellSM(row26.getCell(6), Util.getPrecisionString(forceY[floor - i - 1][valueCol[2]], 0));
+//                dealCellSM(row26.getCell(7), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
+//                dealCellSM(row26.getCell(8), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[1]], 2));
+//                dealCellSM(row26.getCell(9), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
 
                 //x方向
                 //包络值
-                forceEnvelope = Math.max(Math.max(forceX[floor - i - 1][valueCol[2]], forceX[floor - i - 1][valueCol[1]]), forceX[floor - i - 1][valueCol[0]]);
-                shapeEnvelope = Math.max(Math.max(shapeX[floor - i - 1][valueCol[2]], shapeX[floor - i - 1][valueCol[1]]), shapeX[floor - i - 1][valueCol[0]]);
+                forceEnvelope = Math.max(forceX[floor - i - 1][valueCol[0]],
+                        Math.max(forceX[floor - i - 1][valueCol[1]],
+                                Math.max(forceX[floor - i - 1][valueCol[2]],
+                                        Math.max(forceX[floor - i - 1][valueCol[3]],
+                                                Math.max(forceX[floor - i - 1][valueCol[4]],
+                                                        Math.max(forceX[floor - i - 1][valueCol[5]],
+                                                                forceX[floor - i - 1][valueCol[6]]))))));
+
+                shapeEnvelope = Math.max(shapeX[floor - i - 1][valueCol[0]],
+                        Math.max(shapeX[floor - i - 1][valueCol[1]],
+                                Math.max(shapeX[floor - i - 1][valueCol[2]],
+                                        Math.max(shapeX[floor - i - 1][valueCol[3]],
+                                                Math.max(shapeX[floor - i - 1][valueCol[4]],
+                                                        Math.max(shapeX[floor - i - 1][valueCol[5]],
+                                                                shapeX[floor - i - 1][valueCol[6]]))))));
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row25.getCell(2).getText()), 1d / Double.valueOf(row25.getCell(3).getText()));
-                dealCellSM(row25.getCell(10), Util.getPrecisionString(forceEnvelope, 0));
-                dealCellSM(row25.getCell(11), Util.getPrecisionString(shapeEnvelope, 2));
+                dealCellSM(row25.getCell(18), Util.getPrecisionString(forceEnvelope, 0));
+                dealCellSM(row25.getCell(19), Util.getPrecisionString(shapeEnvelope, 2));
 //                dealCellSM(row25.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
                 //极限值
                 speedLimit = speedEnvelope * 1.2d;
                 forceLimit = Math.pow(speedLimit, Double.valueOf(row25.getCell(3).getText())) * Double.valueOf(row25.getCell(2).getText());
                 shapeLimit = shapeEnvelope * 1.2d;
 //                dealCellSM(row25.getCell(15), Util.getPrecisionString(speedLimit, 0));
-                dealCellSM(row25.getCell(12), Util.getPrecisionString(forceLimit, 0));
-                dealCellSM(row25.getCell(13), Util.getPrecisionString(shapeLimit, 1));
+                dealCellSM(row25.getCell(20), Util.getPrecisionString(forceLimit, 0));
+                dealCellSM(row25.getCell(21), Util.getPrecisionString(shapeLimit, 1));
                 //较大值比较选择
                 propertyMax[0] = Math.max(propertyMax[0], forceEnvelope);
                 propertyMax[1] = Math.max(propertyMax[1], shapeEnvelope);
@@ -1300,19 +1366,33 @@ public class InsertToWord {
 
                 //y方向
                 //包络值
-                forceEnvelope = Math.max(Math.max(forceY[floor - i - 1][valueCol[2]], forceY[floor - i - 1][valueCol[1]]), forceY[floor - i - 1][valueCol[0]]);
-                shapeEnvelope = Math.max(Math.max(shapeY[floor - i - 1][valueCol[2]], shapeY[floor - i - 1][valueCol[1]]), shapeY[floor - i - 1][valueCol[0]]);
+                forceEnvelope = Math.max(forceY[floor - i - 1][valueCol[0]],
+                        Math.max(forceY[floor - i - 1][valueCol[1]],
+                                Math.max(forceY[floor - i - 1][valueCol[2]],
+                                        Math.max(forceY[floor - i - 1][valueCol[3]],
+                                                Math.max(forceY[floor - i - 1][valueCol[4]],
+                                                        Math.max(forceY[floor - i - 1][valueCol[5]],
+                                                                forceY[floor - i - 1][valueCol[6]]))))));
+
+                shapeEnvelope = Math.max(shapeY[floor - i - 1][valueCol[0]],
+                        Math.max(shapeY[floor - i - 1][valueCol[1]],
+                                Math.max(shapeY[floor - i - 1][valueCol[2]],
+                                        Math.max(shapeY[floor - i - 1][valueCol[3]],
+                                                Math.max(shapeY[floor - i - 1][valueCol[4]],
+                                                        Math.max(shapeY[floor - i - 1][valueCol[5]],
+                                                        shapeY[floor - i - 1][valueCol[6]]))))));
+
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row26.getCell(2).getText()), 1d / Double.valueOf(row26.getCell(3).getText()));
-                dealCellSM(row26.getCell(10), Util.getPrecisionString(forceEnvelope, 0));
-                dealCellSM(row26.getCell(11), Util.getPrecisionString(shapeEnvelope, 2));
+                dealCellSM(row26.getCell(18), Util.getPrecisionString(forceEnvelope, 0));
+                dealCellSM(row26.getCell(19), Util.getPrecisionString(shapeEnvelope, 2));
 //                dealCellSM(row26.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
                 //极限值
                 speedLimit = speedEnvelope * 1.2d;
                 forceLimit = Math.pow(speedLimit, Double.valueOf(row26.getCell(3).getText())) * Double.valueOf(row26.getCell(2).getText());
                 shapeLimit = shapeEnvelope * 1.2d;
 //                dealCellSM(row26.getCell(15), Util.getPrecisionString(speedEnvelope, 0));
-                dealCellSM(row26.getCell(12), Util.getPrecisionString(forceLimit, 0));
-                dealCellSM(row26.getCell(13), Util.getPrecisionString(shapeLimit, 1));
+                dealCellSM(row26.getCell(20), Util.getPrecisionString(forceLimit, 0));
+                dealCellSM(row26.getCell(21), Util.getPrecisionString(shapeLimit, 1));
 
                 //较大值比较选择
                 propertyMax[0] = Math.max(propertyMax[0], forceEnvelope);
@@ -1397,7 +1477,6 @@ public class InsertToWord {
     }
 
 
-
     private static void init() {
         System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
         String path = basePath + "\\excel\\材料数据.xlsx";
@@ -1437,18 +1516,18 @@ public class InsertToWord {
      * @return
      */
     private static Map<Integer, Double> getAvgValueGroupByFloorFromTable(Map<Integer, List<Integer>> param, Double[][] valueArray) {
-        Map<Integer,Double> map = new HashMap<>();
+        Map<Integer, Double> map = new HashMap<>();
         Double valueSum = 0d;
         List<Integer> positionList;
         for (int i = 1; i <= param.size(); i++) {
             positionList = param.get(i);
             valueSum = 0d;
-            for (Integer posi : positionList){
-               for (int k = 1; k < 8; k++){
-                   valueSum += valueArray[posi][k];
-               }
+            for (Integer posi : positionList) {
+                for (int k = 1; k < 8; k++) {
+                    valueSum += valueArray[posi][k];
+                }
             }
-            map.put(i,valueSum/14.00);
+            map.put(i, valueSum / 14.00);
         }
         return map;
     }
