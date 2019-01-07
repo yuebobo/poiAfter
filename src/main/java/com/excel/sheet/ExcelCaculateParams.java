@@ -392,9 +392,9 @@ public class ExcelCaculateParams {
         String str;
         int cellnum = 0;
         if (Constants.FLOOR_H.equals(type)) {
-            cellnum = 3;
+            cellnum = 0;
         } else if (Constants.ACCOUNT_FLOOR_H.equals(type)) {
-            cellnum = 4;
+            cellnum = 1;
         }
         while (it.hasNext()) {
             row = (XSSFRow) it.next();

@@ -39,12 +39,12 @@ public class GetExcelValue {
                 data.ACCOUNT_FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8), Constants.ACCOUNT_FLOOR_H);
 
                 //X向CAD编号
-                System.out.println("X向CAD编号");
-                data.CAD_MODEL_X = ExcelCaculateParams.getCADModel(excel.getSheetAt(8), Constants.X);
+//                System.out.println("X向CAD编号");
+//                data.CAD_MODEL_X = ExcelCaculateParams.getCADModel(excel.getSheetAt(8), Constants.X);
 
                 //Y向CAD编号
-                System.out.println("Y向CAD编号");
-                data.CAD_MODEL_Y = ExcelCaculateParams.getCADModel(excel.getSheetAt(8), Constants.Y);
+//                System.out.println("Y向CAD编号");
+//                data.CAD_MODEL_Y = ExcelCaculateParams.getCADModel(excel.getSheetAt(8), Constants.Y);
 
                 //周期
                 data.CECLE = ExcelCaculateParams.getCycle(excel.getSheetAt(5));

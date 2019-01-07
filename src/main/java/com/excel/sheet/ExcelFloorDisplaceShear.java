@@ -104,6 +104,13 @@ public class ExcelFloorDisplaceShear {
 				flagCell = row.getCell(1).getRawValue();
 			}
 			if(firstCell == null) break;
+
+			//======================= 只获取 以 CF01 开头的数据 ========================================
+			if (firstCell == null || firstCell.length() < 3){
+				return Util.mapToArray(map, maxFloor,precision);
+			}
+			//======================= 排除 以X1 开头的数据    ========================================
+
 			floor = Integer.valueOf(firstCell.substring(2));
 			maxFloor = Math.max(maxFloor, floor);
 			if(flagCell.contains("X")) vaileCell = Math.abs(row.getCell(4).getNumericCellValue());

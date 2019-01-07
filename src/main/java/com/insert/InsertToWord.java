@@ -49,52 +49,58 @@ public class InsertToWord {
             init();
 
             //CAD模型编号表（SAP模型中编号）
-            insertCADModelNo(tables.get(4));
+//            insertCADModelNo(tables.get(4));
 
             //模型对比三个表
-            insertModelCompare(tables.get(6), tables.get(7), tables.get(8));
+            insertModelCompare(tables.get(7), tables.get(8), tables.get(9));
 
             //基低剪力对比          （非减震结构底部剪力对比表）
-            insertBaseShearCopmpare(tables.get(9));
+            insertBaseShearCopmpare(tables.get(10));
 
             //地震波信息
-            insertEarthquakeWaveInfo(tables.get(10));
+            insertEarthquakeWaveInfo(tables.get(11));
 //
 //            //地震波持时
-            insertEarthquakeWave(tables.get(11));
+            insertEarthquakeWave(tables.get(12));
 //
 //            //层间剪力对比
-            insertFloorShearCopmare(tables.get(13));
+            insertFloorShearCopmare(tables.get(14));
 //
 //            //层间位移对比
-            insertFloorDisplaceCompare(tables.get(14), tables.get(15));
+            insertFloorDisplaceCompare(tables.get(15), tables.get(16));
+
+            //===============================================================
 //
 //            //地震波下结构X/Y方向的弹性能
-            insertElasticPropertyOfBaseEarthquake(tables.get(17), tables.get(18));
+//            insertElasticPropertyOfBaseEarthquake(tables.get(17), tables.get(18));
+////
+////            //各地震波下X/Y方向阻尼器耗能
+//            insertEarthquakeDamperDisEnergy(tables.get(4), tables.get(19), tables.get(20));
+////
+////            //结构附加阻尼比计算  该表的数据依赖与上边四个表的数据(此表要后处理)
+//            insertAnnexDamperRatio(tables.get(16), tables.get(17), tables.get(18), tables.get(19), tables.get(20));
+////
+////            //阻尼器出力与楼层剪力占比
+//            insertDamperFloorRatio(tables.get(21), tables.get(22), tables.get(4));
+////
+////            //层间位移角
+//            insertFloorDisplaceAngle(tables.get(24), tables.get(25));
+////
+////
+////            //结构各层阻尼器最大出力及位移包络值汇总
+////            //粘滞阻尼器性能规格表
+//            maxEarthquakeDapmerForceDisplace(tables.get(26), tables.get(27), tables.get(3));
+////
+//            //金属阻尼器 表5
+//            insertMetalDamper(tables.get(5), tables.get(4));
 //
-//            //各地震波下X/Y方向阻尼器耗能
-            insertEarthquakeDamperDisEnergy(tables.get(4), tables.get(19), tables.get(20));
+////            //计算最后几个表里的值
+////            //减震器周边子结构的设计计算方法
+//            calculateTable(tables.get(28), tables.get(29), tables.get(30));
 //
-//            //结构附加阻尼比计算  该表的数据依赖与上边四个表的数据(此表要后处理)
-            insertAnnexDamperRatio(tables.get(16), tables.get(17), tables.get(18), tables.get(19), tables.get(20));
-//
-//            //阻尼器出力与楼层剪力占比
-            insertDamperFloorRatio(tables.get(21), tables.get(22), tables.get(4));
-//
-//            //层间位移角
-            insertFloorDisplaceAngle(tables.get(24), tables.get(25));
-//
-//
-//            //结构各层阻尼器最大出力及位移包络值汇总
-//            //粘滞阻尼器性能规格表
-            maxEarthquakeDapmerForceDisplace(tables.get(26), tables.get(27), tables.get(3));
-//
-            //金属阻尼器 表5
-            insertMetalDamper(tables.get(5), tables.get(4));
 
-//            //计算最后几个表里的值
-//            //减震器周边子结构的设计计算方法
-            calculateTable(tables.get(28), tables.get(29), tables.get(30));
+
+
 
         } catch (FileNotFoundException e) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + wordPath + "没找到");
