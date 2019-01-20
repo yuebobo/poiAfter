@@ -45,4 +45,12 @@ public class BaseDate {
     public Map<String,Object> PILLAR_PARAMS;
     //悬臂
     public Map<String,Object> CANTILEVER_PARAMS ;
+
+    //楼层参数
+    public List<FloorParameter> FLOOR_PARAMETER;
+
+    //参数表里的数据
+    public List<Parameter> PARAMETER_X;
+    public List<Parameter> PARAMETER_Y;
+
 }

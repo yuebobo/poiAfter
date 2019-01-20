@@ -1485,8 +1485,9 @@ public class InsertToWord {
 
     private static void init() {
         System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
-        String path = basePath + "\\excel\\材料数据.xlsx";
-        data = GetExcelValue.init(path);
+        String path1 = basePath + "\\excel\\材料数据.xlsx";
+        String path2 = basePath + "\\excel\\参数表.xlsx";
+        data = GetExcelValue.init(path1,path2);
     }
 
     /**

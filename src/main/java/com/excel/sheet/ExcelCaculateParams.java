@@ -1,6 +1,8 @@
 package com.excel.sheet;
 
 import com.entity.Constants;
+import com.entity.FloorParameter;
+import com.entity.Parameter;
 import com.file.GetExcelValue;
 import com.util.Util;
 import org.apache.poi.ss.usermodel.Row;
@@ -458,5 +460,75 @@ public class ExcelCaculateParams {
         return value;
     }
 
+    /**
+     * 楼层参数的获取
+     *
+     * @param sheet
+     * @return
+     */
+    public static List<FloorParameter> getFloorParameter(XSSFSheet sheet) {
+        Iterator it = sheet.iterator();
+        it.next();
+        it.next();
+        XSSFRow row;
+        String str;
+        List<FloorParameter> list = new ArrayList<>();
+        FloorParameter floorParameter;
+        while (it.hasNext()) {
+            floorParameter = new FloorParameter();
+            row = (XSSFRow) it.next();
+            str = Util.getValueFromXssfcell(row.getCell(0));
+            if (null == str || "".equals(str) || "0".equals(str) || "0.0".equals(str)) {
+                break;
+            }
+            floorParameter.setFloorH(Double.valueOf(Util.getValueFromXssfcell(row.getCell(0))));
+            floorParameter.setAddUpFloorH(Double.valueOf(Util.getValueFromXssfcell(row.getCell(1))));
+            floorParameter.setNumber(Util.getValueFromXssfcell(row.getCell(2)));
+            floorParameter.setType(Util.getValueFromXssfcell(row.getCell(3)));
+            floorParameter.setBrand(Util.getValueFromXssfcell(row.getCell(4)));
+            floorParameter.setForce(Double.valueOf(Util.getValueFromXssfcell(row.getCell(5))));
+            floorParameter.setDisplacement(Double.valueOf(Util.getValueFromXssfcell(row.getCell(6))));
+            floorParameter.setStiffness(Double.valueOf(Util.getValueFromXssfcell(row.getCell(7))));
+            floorParameter.setShape(Util.getValueFromXssfcell(row.getCell(8)));
+            floorParameter.setCount(Double.valueOf(Util.getValueFromXssfcell(row.getCell(9))).intValue());
+            System.out.println(floorParameter.toString());
+            list.add(floorParameter);
+        }
+        return list;
+    }
 
+    /**
+     * 参数表里参数的获取
+     *
+     * @param sheet
+     * @return
+     */
+    public static List<Parameter> getParameter(XSSFSheet sheet) {
+        Iterator it = sheet.iterator();
+        it.next();
+        XSSFRow row;
+        List<Parameter> list = new ArrayList<>();
+        Parameter parameter;
+        String str;
+        while (it.hasNext()) {
+            parameter = new Parameter();
+            row = (XSSFRow) it.next();
+            str = Util.getValueFromXssfcell(row.getCell(0));
+            if (null == str || "".equals(str) || "0".equals(str) || "0.0".equals(str)) {
+                break;
+            }
+            parameter.setCadNumber(Util.getValueFromXssfcell(row.getCell(0)));
+            parameter.setType(Util.getValueFromXssfcell(row.getCell(1)));
+            parameter.setBrand(Util.getValueFromXssfcell(row.getCell(2)));
+            parameter.setPk_1(Double.valueOf(Util.getValueFromXssfcell(row.getCell(3))));
+            parameter.setPk_2(Double.valueOf(Util.getValueFromXssfcell(row.getCell(4))));
+            parameter.setArea(Double.valueOf(Util.getValueFromXssfcell(row.getCell(5))));
+            parameter.setElasticModulus(Double.valueOf(Util.getValueFromXssfcell(row.getCell(6))));
+            parameter.setPkAxisLength(Double.valueOf(Util.getValueFromXssfcell(row.getCell(7))));
+            parameter.setStiffness(Double.valueOf(Util.getValueFromXssfcell(row.getCell(8))));
+            System.out.println(parameter.toString());
+            list.add(parameter);
+        }
+        return list;
+    }
 }

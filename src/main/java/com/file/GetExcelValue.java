@@ -2,6 +2,8 @@ package com.file;
 
 import com.entity.BaseDate;
 import com.entity.Constants;
+import com.entity.FloorParameter;
+import com.entity.Parameter;
 import com.excel.sheet.*;
 import com.util.Util;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,23 +22,35 @@ import java.util.Map;
  */
 public class GetExcelValue {
 
-    public static BaseDate init(String path) {
+    /**
+     * 初始化基本参数
+     *
+     * @param path1
+     * @Param path2
+     * @return
+     */
+    public static BaseDate init(String path1,String path2) {
         {
-            FileInputStream e = null;
+            FileInputStream e1 = null;
+            FileInputStream e2 = null;
+
             try {
-                e = new FileInputStream(path);
-                XSSFWorkbook excel = new XSSFWorkbook(e);
+                e1 = new FileInputStream(path1);
+                XSSFWorkbook excel1 = new XSSFWorkbook(e1);
+
+                e2 = new FileInputStream(path2);
+                XSSFWorkbook excel2 = new XSSFWorkbook(e2);
 
                 //数据获取
                 BaseDate data = new BaseDate();
 
                 //层高
-                System.out.println("层高：");
-                data.FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8), Constants.FLOOR_H);
+//                System.out.println("层高：");
+//                data.FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8), Constants.FLOOR_H);
 
                 //累计层高
-                System.out.println("累计层高：");
-                data.ACCOUNT_FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8), Constants.ACCOUNT_FLOOR_H);
+//                System.out.println("累计层高：");
+//                data.ACCOUNT_FLOOR_H = ExcelCaculateParams.getFloorH(excel.getSheetAt(8), Constants.ACCOUNT_FLOOR_H);
 
                 //X向CAD编号
 //                System.out.println("X向CAD编号");
@@ -47,18 +61,18 @@ public class GetExcelValue {
 //                data.CAD_MODEL_Y = ExcelCaculateParams.getCADModel(excel.getSheetAt(8), Constants.Y);
 
                 //周期
-                data.CECLE = ExcelCaculateParams.getCycle(excel.getSheetAt(5));
+                data.CECLE = ExcelCaculateParams.getCycle(excel1.getSheetAt(5));
 
                 //质量
-                data.QUALITY = ExcelCaculateParams.getQuality(excel.getSheetAt(4));
+                data.QUALITY = ExcelCaculateParams.getQuality(excel1.getSheetAt(4));
 
                 //减震剪力
                 System.out.println("减震剪力：");
-                data.FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel.getSheetAt(7));
+                data.FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel1.getSheetAt(7));
 
                 //非减震剪力
                 System.out.println("非减震剪力：");
-                data.NOT_FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel.getSheetAt(6));
+                data.NOT_FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel1.getSheetAt(6));
 
 
                 //梁
@@ -67,21 +81,45 @@ public class GetExcelValue {
 //				data.PILLAR_PARAMS = ExcelCaculateParams.getParamsOfPillar(excel);
 //				//悬臂
 //				data.CANTILEVER_PARAMS = ExcelCaculateParams.getParamsOfCantilever(excel);
+
+
+                //楼层参数的获取
+                System.out.println("楼层参数的获取");
+                data.FLOOR_PARAMETER = ExcelCaculateParams.getFloorParameter(excel1.getSheetAt(8));
+
+                //参数表里参数获取
+                System.out.println("参数表里参数获取");
+                data.PARAMETER_X = ExcelCaculateParams.getParameter(excel2.getSheetAt(0));
+                data.PARAMETER_X = ExcelCaculateParams.getParameter(excel2.getSheetAt(1));
+
+                //将楼层参数列表里层高和累计层高单独获取出来赋值到data的属性里边
+                Double[][] f = getArrayFromList(data.FLOOR_PARAMETER);
+                data.FLOOR_H = f[0];
+                data.ACCOUNT_FLOOR_H = f[1];
+
                 return data;
 
-
-            } catch (FileNotFoundException e1) {
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "没找到");
+            } catch (FileNotFoundException ee1) {
+                ee1.printStackTrace();
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path1 + "\n 或 "+ path2 + "没找到");
                 return null;
-            } catch (IOException e1) {
-                System.out.println("$$$  初始化  异常 $$$$$$" + path + "处理异常");
+            } catch (IOException ee2) {
+                ee2.printStackTrace();
+                System.out.println("$$$  初始化基本参数（材料数据）  异常 $$$$$$" + path1 + "\n 或 "+ path2 + "处理异常");
                 return null;
             } finally {
-                if (e != null) {
+                if (e1 != null) {
                     try {
-                        e.close();
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
+                        e1.close();
+                    } catch (IOException ee) {
+                        ee.printStackTrace();
+                    }
+                }
+                if (e2 != null) {
+                    try {
+                        e2.close();
+                    } catch (IOException ee) {
+                        ee.printStackTrace();
                     }
                 }
             }
@@ -612,4 +650,14 @@ public class GetExcelValue {
         }
         System.out.println();
     }
+
+    private static Double[][] getArrayFromList(List<FloorParameter> list){
+        Double[][] value = new Double[2][list.size()];
+       for (int i = 0; i < list.size() ; i++){
+           value[0][i] = list.get(i).getFloorH();
+           value[1][i] = list.get(i).getAddUpFloorH();
+       }
+       return value;
+    }
+
 }
