@@ -90,4 +90,108 @@ public class ExcelDamper {
 		return Util.mapToArray1(map, maxFloor);
 	}
 
+
+	/**
+	 * 地震波下阻尼器处理位移/阻尼器形变   x和y不做区分
+	 * @param sheet
+	 * @return
+	 */
+	public static Double[][] getDamperValueXAndY(XSSFSheet sheet,int flagPosition , int valuePosition){
+		Map<Integer, ValueNote> map = new HashMap<>();
+		//三行表头
+		Iterator it = sheet.iterator();
+		it.next();
+		it.next();
+		it.next();
+
+		XSSFRow  row;
+		String firstCell;
+		String flagCell;
+		Double vaileCell = null;
+		ValueNote valueNote;
+//		当前编号
+		Integer floor;
+//		最大编号
+		Integer maxFloor = 0;
+		while (it.hasNext()) {
+			row = (XSSFRow) it.next();
+			try {
+				firstCell  = row.getCell(0).getStringCellValue();
+			} catch (Exception e) {
+				firstCell  = row.getCell(0).getRawValue();
+			}
+			try {
+				flagCell = row.getCell(flagPosition).getStringCellValue();
+			} catch (Exception e) {
+				flagCell = row.getCell(flagPosition).getRawValue();
+			}
+			if(firstCell == null) break;
+			floor = Integer.valueOf(firstCell);
+			maxFloor = Math.max(maxFloor, floor);
+			if (flagCell.indexOf("TXB") >= 0 || flagCell.indexOf("TYB") >= 0) continue;
+			flagCell = flagCell.replace("Y","X");
+			vaileCell = row.getCell(valuePosition).getNumericCellValue();
+			//该楼层还没有在map里
+			if(!map.containsKey(floor)){
+				map.put(floor, new ValueNote(floor.toString()));
+			}
+			valueNote = map.get(floor);
+			Util.insertValue(valueNote, flagCell, vaileCell);
+		}
+		return Util.mapToArray1(map, maxFloor)[0];
+	}
+
+
+	/**
+	 *  TXB TYB
+	 * @param sheet
+	 * @return
+	 */
+	public static Double[][] getDamperValueTB(XSSFSheet sheet,int flagPosition , int valuePosition){
+		Map<Integer, ValueNote> map = new HashMap<>();
+		//三行表头
+		Iterator it = sheet.iterator();
+		it.next();
+		it.next();
+		it.next();
+
+		XSSFRow  row;
+		String firstCell;
+		String flagCell;
+		Double vaileCell = null;
+		ValueNote valueNote;
+//		当前编号
+		Integer floor;
+//		最大编号
+		Integer maxFloor = 0;
+		while (it.hasNext()) {
+			row = (XSSFRow) it.next();
+			try {
+				firstCell  = row.getCell(0).getStringCellValue();
+			} catch (Exception e) {
+				firstCell  = row.getCell(0).getRawValue();
+			}
+			try {
+				flagCell = row.getCell(flagPosition).getStringCellValue();
+			} catch (Exception e) {
+				flagCell = row.getCell(flagPosition).getRawValue();
+			}
+			if(firstCell == null) break;
+			floor = Integer.valueOf(firstCell);
+			maxFloor = Math.max(maxFloor, floor);
+			if (flagCell.indexOf("TXB") < 0 && flagCell.indexOf("TYB") < 0) continue;
+			//只有一列，存在T1X里
+			flagCell = "T1X";
+			vaileCell = row.getCell(valuePosition).getNumericCellValue();
+			//该楼层还没有在map里
+			if(!map.containsKey(floor)){
+				map.put(floor, new ValueNote(floor.toString()));
+			}
+			valueNote = map.get(floor);
+			Util.insertValue(valueNote, flagCell, vaileCell);
+		}
+		return Util.mapToArray1(map, maxFloor)[0];
+	}
+
+
 }

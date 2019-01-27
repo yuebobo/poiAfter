@@ -1,6 +1,9 @@
 package com.insert;
 
 import com.entity.BaseDate;
+import com.entity.FloorParameter;
+import com.entity.Parameter;
+import com.excel.sheet.ExcelDamper;
 import com.file.GetExcelValue;
 import com.txt.TxtGetValue;
 import com.util.Util;
@@ -48,8 +51,11 @@ public class InsertToWord {
             //初始化，获取初始数据
             init();
 
-            //CAD模型编号表（SAP模型中编号）
-//            insertCADModelNo(tables.get(4));
+            // 减震器编号
+            insertShockAbsorber(tables.get(4));
+
+            //BRB刚度等效计算
+            insertRigidityCalculate(tables.get(6));
 
             //模型对比三个表
             insertModelCompare(tables.get(7), tables.get(8), tables.get(9));
@@ -63,12 +69,37 @@ public class InsertToWord {
 //            //地震波持时
             insertEarthquakeWave(tables.get(12));
 //
-//            //层间剪力对比
+//            //层间剪力
             insertFloorShearCopmare(tables.get(14));
 //
 //            //层间位移对比
             insertFloorDisplaceCompare(tables.get(15), tables.get(16));
 
+            //小震下各BRB的内力及变形表
+            insertBRBForceAndDeformation(tables.get(17));
+
+            //小震最不利组合下BRB内力表
+            insertBRBForceTable(tables.get(18));
+
+            //小震下BRB地震剪力及倾覆力矩占比表
+            //减震结构楼层总倾覆力矩
+            insertBRBShearForceAndMoment(tables.get(19));
+            //楼层阻尼器倾覆力矩之和
+            //表 20
+            //阻尼器倾覆力矩/总倾覆力矩
+            // 表 21
+
+            //阻尼器出力与楼层剪力占比
+            //表22 23
+
+//            大震下减震结构X向层间位移角
+            //表 25 26
+            insertFloorDisplaceAngle(tables.get(25), tables.get(26));
+
+
+            //结构各层阻尼器最大出力及位移包络值汇总
+            maxEarthquakeDapmerForceDisplace(tables.get(27), tables.get(3));
+////
             //===============================================================
 //
 //            //地震波下结构X/Y方向的弹性能
@@ -83,9 +114,6 @@ public class InsertToWord {
 ////            //阻尼器出力与楼层剪力占比
 //            insertDamperFloorRatio(tables.get(21), tables.get(22), tables.get(4));
 ////
-////            //层间位移角
-//            insertFloorDisplaceAngle(tables.get(24), tables.get(25));
-////
 ////
 ////            //结构各层阻尼器最大出力及位移包络值汇总
 ////            //粘滞阻尼器性能规格表
@@ -96,11 +124,7 @@ public class InsertToWord {
 //
 ////            //计算最后几个表里的值
 ////            //减震器周边子结构的设计计算方法
-//            calculateTable(tables.get(28), tables.get(29), tables.get(30));
-//
-
-
-
+            calculateTable(tables.get(28), tables.get(29));
 
         } catch (FileNotFoundException e) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + wordPath + "没找到");
@@ -132,165 +156,146 @@ public class InsertToWord {
         }
     }
 
+
     /**
-     * CAD模型编号表（SAP模型中编号）
+     * 屈曲约束支撑（BRB）性能规格表
      *
      * @param table4
      */
-    private static void insertCADModelNo(XWPFTable table4) {
+    private static void insertRestricePerformance(XWPFTable table4,Double[][] value) {
         System.out.println("=================================================");
-        System.out.println("\n处理 CAD模型编号表（SAP模型中编号）");
-
-        String[][] x_CAD = data.CAD_MODEL_X;
-        String[][] y_CAD = data.CAD_MODEL_Y;
-        List<String> listX = new ArrayList<>();
-        List<String> listY = new ArrayList<>();
-
-//      x方向
-        boolean flage = true;
-        String value;
-        XWPFTableRow row;
-        int countX = 0;
-        for (int i = 0; flage; i++) {
-            flage = false;
-
-            for (int k = 0; k < x_CAD.length; k++) {
-                try {
-                    value = x_CAD[k][i];
-                    if (null != value && !"".equals(value)) {
-                        row = table4.createRow();
-                        dealCellSM(row.getCell(0), value);
-                        dealCellSM(row.getCell(1), ++countX + "");
-                        listX.add(value);
-                        flage = true;
-                    }
-                } catch (Exception e) {
-                }
-            }
-        }
-        //y方向
-        int countY = 0;
-        int count = countX;
-        flage = true;
-        for (int i = 0; flage; i++) {
-            flage = false;
-            for (int k = 0; k < y_CAD.length; k++) {
-                try {
-                    value = y_CAD[k][i];
-                    if (null != value && !"".equals(value)) {
-                        row = table4.getRow(countY + 1);
-                        dealCellSM(row.getCell(2), value);
-                        dealCellSM(row.getCell(3), ++count + "");
-                        countY++;
-                        listY.add(value);
-                        if (countY > countX) {
-                            System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
-                            flage = false;
-                            break;
-                        }
-                        flage = true;
-                    }
-                } catch (Exception e) {
-                }
-            }
-        }
-        if (countX != countX) {
-            System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
-        }
-        //CAD模型中的编号
-        modelNo = new String[2][Math.max(listX.size(), listY.size())];
-        listX.toArray(modelNo[0]);
-        listY.toArray(modelNo[1]);
-        //SAP模型中编号
-        SPANo = new int[countX + countY];
-        for (int i = 0; i < SPANo.length; ) {
-            SPANo[i] = ++i;
-        }
-        System.out.println("============== CAD 编号 ====================");
-        System.out.println(listX);
-        System.out.println(listY);
-        System.out.println("============== SPA 编号 ====================");
-        System.out.println(Arrays.asList(SPANo));
-    }
-
-    /**
-     * 金属阻尼器表格的处理
-     *
-     * @param table5
-     * @param table2
-     */
-    private static void insertMetalDamper(XWPFTable table5, XWPFTable table2) {
-        System.out.println("=================================================");
-        System.out.println("金属阻尼器表格的处理");
+        System.out.println("屈曲约束支撑（BRB）性能规格表");
         try {
-            //获取CAD 编号
-            String[][] modelValue = getModelNo(table2);
-            String[][] x_CAD = data.CAD_MODEL_X;
-            String[][] y_CAD = data.CAD_MODEL_Y;
+            List<FloorParameter> floor_parameter = data.FLOOR_PARAMETER;
+            int size = floor_parameter.size();
+            XWPFTableRow row5 = table4.getRow(2);
+            FloorParameter p;
+            Integer count = 0;
+            int modelRow = 2;
+            for (int i = 0; i < size; i++) {
+                table4.addRow(row5,modelRow + i);
+                row5 = table4.getRow(modelRow + i);
+                p = floor_parameter.get(i);
+                dealCellSM(row5.getCell(0), p.getNumber());
+                dealCellSM(row5.getCell(1), p.getType());
+                dealCellSM(row5.getCell(2), p.getBrand());
+                dealCellSM(row5.getCell(3), Util.getPrecisionString(p.getForce(), 0));
+                dealCellSM(row5.getCell(4), Util.getPrecisionString(p.getDisplacement(), 1));
+        // ============================== 来源于表 汇总表 ============================================================
+                dealCellSM(row5.getCell(5),Util.getPrecisionString(value[i][0],0));
+                dealCellSM(row5.getCell(6),Util.getPrecisionString(value[i][1],1));
+                dealCellSM(row5.getCell(7),Util.getPrecisionString(value[i][2],0));
+                dealCellSM(row5.getCell(8),Util.getPrecisionString(value[i][3],1));
+        // ============================== 来源于表  ============================================================
 
-            //获取每一层对应的编号位置  位置从0开始
-            Map<Integer, List<Integer>> map = getFloorOnPositionOfModelNO(modelValue);
-
-            //X方向
-            //原来是工作簿4
-            Double[][][] valueX = GetExcelValue.getEarthquakeDamperDisEnergyX(basePath + "\\excel\\工作簿3.xlsx");
-            //阻尼器形变
-            Double[][] shapeX = valueX[0];
-            //阻尼器内力
-            Double[][] forceX = valueX[1];
-
-            //Y方向
-            //原来是工作簿4
-            Double[][][] valueY = GetExcelValue.getEarthquakeDamperDisEnergyY(basePath + "\\excel\\工作簿3.xlsx");
-            //阻尼器形变
-            Double[][] shapeY = valueY[0];
-            //阻尼器内力
-            Double[][] forceY = valueY[1];
-
-            //获取层高数据  此处数值单位为 豪米
-            Double[] floorH = data.FLOOR_H;
-            if (map.size() != floorH.length) {
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$  金属阻尼器表格  CAD模型编号的楼层数量与层高表里的楼层数量不一致   $$$$$$$$$$$$$  ");
+                dealCellSM(row5.getCell(9), Util.getPrecisionString(p.getStiffness(), 2));
+                dealCellSM(row5.getCell(10), p.getShape());
+                dealCellSM(row5.getCell(11), p.getCount().toString());
+                count += p.getCount();
             }
-            Integer floor = map.size();
-
-            //每一层对应的金属阻尼器弹性时程平均出力 和	金属阻尼器弹性时程平均位移
-            Map<Integer, Double> forceXAvg = getAvgValueGroupByFloorFromTable(map, forceX);
-            Map<Integer, Double> forceYAvg = getAvgValueGroupByFloorFromTable(map, forceY);
-            Map<Integer, Double> shapeXAvg = getAvgValueGroupByFloorFromTable(map, shapeX);
-            Map<Integer, Double> shapeYAvg = getAvgValueGroupByFloorFromTable(map, shapeY);
-//
-//表头四行，
-            //数据行以表格第五行数据为模版进行加入数据
-            //新加入的行都插入到第六行
-            //最后模板行在数据行的最下边，数据插入完成将其删除
-            XWPFTableRow row500 = table5.getRow(4);
-            XWPFTableRow row;
-            // Y方向
-            for (Integer i = floor; i >= 1; i--) {
-                for (int k = y_CAD[i - 1].length - 1; k >= 0; k--) {
-                    table5.addRow(row500, 5);
-                    row = table5.getRow(5);
-                    dealCellSM(row.getCell(0), y_CAD[i - 1][k]);
-                    insertTable(row, i, floorH, forceYAvg, shapeYAvg);
-                }
-            }
-            //X方向
-            for (Integer i = floor; i >= 1; i--) {
-                for (int k = x_CAD[i - 1].length - 1; k >= 0; k--) {
-                    table5.addRow(row500, 5);
-                    row = table5.getRow(5);
-                    dealCellSM(row.getCell(0), x_CAD[i - 1][k]);
-                    insertTable(row, i, floorH, forceXAvg, shapeXAvg);
-                }
-            }
-            table5.removeRow(table5.getRows().size() - 1);
+            table4.removeRow(modelRow);
+            dealCellSM(table4.getRow(size+2).getCell(1),count.toString());
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$金属阻尼器表格的处理时发生异常");
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  屈曲约束支撑（BRB）性能规格  表格的处理时发生异常");
         }
     }
 
+
+    /**
+     * 减震器编号
+     *
+     * @param table5
+     */
+    private static void insertShockAbsorber(XWPFTable table5) {
+        System.out.println("=================================================");
+        System.out.println("减震器编号表");
+        try {
+            List<FloorParameter> floor_parameter = data.FLOOR_PARAMETER;
+            List<Parameter> parameter_x_y = data.PARAMETER_X_Y;
+            ArrayList<String> numbers = new ArrayList<>();
+            floor_parameter.forEach( p -> {
+                String str = p.getNumber();
+                Integer count = p.getCount();
+                for (int i = 0; i < count; i++){
+                    numbers.add(str);
+                }
+            });
+            if (parameter_x_y.size() != numbers.size()){
+                System.out.println("$$$$$$$$$$$$$$  图形中的编号与减震器种类型号 的数量不一致");
+            }
+            int size = Math.min(parameter_x_y.size(),numbers.size());
+            XWPFTableRow row;
+            for (int i = 0; i < size; i++){
+                row = table5.createRow();
+                dealCellSM(row.getCell(0),parameter_x_y.get(i).getCadNumber());
+                dealCellSM(row.getCell(1),numbers.get(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  减震器编号 表格的处理时发生异常");
+        }
+    }
+
+
+
+    /**
+     * BRB刚度等效计算
+     *
+     * @param table7
+     */
+    private static void insertRigidityCalculate(XWPFTable table7) {
+        System.out.println("=================================================");
+        System.out.println("BRB刚度等效计算");
+        try {
+            List<FloorParameter> floor_parameter = data.FLOOR_PARAMETER;
+            List<Parameter> parameter_x_y = data.PARAMETER_X_Y;
+            ArrayList<Double> ratios = new ArrayList<>();
+            floor_parameter.forEach( p -> {
+                Double force = p.getForce();
+                Double displacement = p.getDisplacement();
+                Double ratio = force / displacement;
+                Integer count = p.getCount();
+                for (int i = 0; i < count; i++){
+                    ratios.add(ratio);
+                }
+            });
+            if (parameter_x_y.size() != ratios.size()){
+                System.out.println("$$$$$$$$$$$$$$  总根数与excel汇总表 的数量不一致");
+            }
+            int size = Math.min(parameter_x_y.size(),ratios.size());
+            XWPFTableRow row = table7.getRow(2);
+            int modelRow = 2;
+            for (int i = 0; i < size; i++){
+                table7.addRow(row, i + modelRow);
+                row = table7.getRow(i + modelRow);
+                dealCellSM(row.getCell(0),parameter_x_y.get(i).getCadNumber());
+                dealCellSM(row.getCell(1),parameter_x_y.get(i).getType());
+                dealCellSM(row.getCell(2),parameter_x_y.get(i).getBrand());
+                dealCellSM(row.getCell(3),Util.getPrecisionString(parameter_x_y.get(i).getPk_1(),0));
+                dealCellSM(row.getCell(4),Util.getPrecisionString(parameter_x_y.get(i).getPk_2(),0));
+                dealCellSM(row.getCell(5),Util.getPrecisionString(parameter_x_y.get(i).getArea(),0));
+                dealCellSM(row.getCell(6),Util.getPrecisionString(parameter_x_y.get(i).getElasticModulus(),0));
+                dealCellSM(row.getCell(7),Util.getPrecisionString(parameter_x_y.get(i).getPkAxisLength(),0));
+                dealCellSM(row.getCell(8),Util.getPrecisionString(parameter_x_y.get(i).getStiffness(),0));
+                dealCellSM(row.getCell(9),Util.getPrecisionString(ratios.get(i),0));
+            }
+            table7.removeRow(modelRow);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  BRB刚度等效计算 表格的处理时发生异常");
+        }
+    }
+
+
+    /**
+     * insertMetalDamper 表引用
+     * @param row
+     * @param i
+     * @param floorH
+     * @param forceAvg
+     * @param shapeAvg
+     */
     private static void insertTable(XWPFTableRow row, int i, Double[] floorH, Map<Integer, Double> forceAvg, Map<Integer, Double> shapeAvg) {
         Double v;
         dealCellSM(row.getCell(1), i + ""); //楼层
@@ -340,31 +345,12 @@ public class InsertToWord {
      * @param table5
      */
     private static void insertModelCompare(XWPFTable table3, XWPFTable table4, XWPFTable table5) {
-        System.out.println("\n处理模型对比三张表");
+        System.out.println("=================================================");
+        System.out.println("处理模型对比三张表");
         try {
-            //1.结构周期对比   //地震剪力对比Fx  //地震剪力对比Fy
-            //从记事本WZQ中 获取
-//            Map<Integer, List<String>> map = TxtGetValue.getValueFor3(basePath + "\\txt\\2.txt");
-
-
-            //2.结构质量对比  周期对比    地震剪力对比
             Map<Integer, Object> modelMap = GetExcelValue.getModel(basePath + "\\excel\\工作簿1.xlsx");
-
-            //3.结构质量对比    从记事本WMASS中获取 ：结构的总质量       (表3 PKPM)
-//            String qualityOfStructure1 = TxtGetValue.getValueFor1(basePath + "\\txt\\3.txt");
-
-            //  == == 从材料数据文件里获取周期，减震剪力对比,质量
-//            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
-
-            //4.周期对比                           （表2   PKPM）
-//            String[] cycle1 = (String[]) map.get(1);
             String[] cycle1 = data.CECLE;
-
-            //结构质量对比
-//            String qualityOfStructure1 = (String) map.get(2);
             String qualityOfStructure1 = data.QUALITY;
-            //
-//            List[] fxFy = (List[]) map.get(3);
             List[] fxFy = data.FX_FY;
 
             //5.地震剪力对比Fx    （表1   PKPM   X）
@@ -431,7 +417,7 @@ public class InsertToWord {
      */
     private static void insertBaseShearCopmpare(XWPFTable table6) {
         System.out.println("======================================================");
-        System.out.println("\n处理 非减震结构底部剪力对比表");
+        System.out.println("处理 非减震结构底部剪力对比表");
         try {
             //e2T5R2[0] 为x方向  从0到7   依次为反应普  T1-T5  R1-R2
             //e2T5R2[1] 为y方向
@@ -476,8 +462,8 @@ public class InsertToWord {
      * @param table7
      */
     private static void insertEarthquakeWaveInfo(XWPFTable table7) {
-        System.out.println("=================================================");
-        System.out.println("\n处理 地震波信息表");
+        System.out.println("=========================================================");
+        System.out.println("处理 地震波信息表");
         String path = basePath + "\\excel\\地震波信息.xlsx";
         try {
             //获取word表里的编号数据 T1~T5
@@ -539,7 +525,8 @@ public class InsertToWord {
      * @param table8
      */
     private static void insertEarthquakeWave(XWPFTable table8) {
-        System.out.println("\n处理 地震波持时表");
+        System.out.println("=========================================================");
+        System.out.println("处理 地震波持时表");
         try {
             //获取周期
 //            String singleT = TxtGetValue.getSingleT(basePath + "\\txt\\1.txt");
@@ -579,11 +566,9 @@ public class InsertToWord {
      */
     private static void insertFloorShearCopmare(XWPFTable table10) {
         System.out.println("=========================================================");
-        System.out.println("\n处理 楼层剪力对比表");
+        System.out.println("处理 楼层剪力对比表");
         try {
             String[][][] shearNot = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
-//            Map<Integer, Object> map = GetExcelValue.getCycleAndFxFy(basePath + "\\excel\\材料数据.xlsx");
-//            List[] fxFy = (List[]) map.get(3);
             List[] fxFy = data.FX_FY;
 
             List<String> earthquakeAfterX = fxFy[0];
@@ -635,7 +620,8 @@ public class InsertToWord {
      * @param table14
      */
     private static void insertFloorDisplaceCompare(XWPFTable table12, XWPFTable table14) {
-        System.out.println("\n处理 楼层层间位移对比表与楼层层间位移角");
+        System.out.println("=========================================================");
+        System.out.println("处理 楼层层间位移对比表与楼层层间位移角");
         try {
             //非减震结构层间位移
             String[][][] displaceNot = GetExcelValue.getDisplace(basePath + "\\excel\\工作簿3.xlsx", 2);
@@ -707,6 +693,151 @@ public class InsertToWord {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "楼层层间位移对比表与楼层层间位移角");
         }
     }
+
+    /**
+     * 小震下各BRB的内力及变形表
+     * @param table16
+     */
+    private static void insertBRBForceAndDeformation(XWPFTable table16) {
+        System.out.println("=========================================================");
+        System.out.println("处理 小震下各BRB的内力及变形表");
+        try {
+            List<FloorParameter> floor_parameter = data.FLOOR_PARAMETER;
+            List<Parameter> parameter_x_y = data.PARAMETER_X_Y;
+            ArrayList<String[]> strs = new ArrayList<>();
+            floor_parameter.forEach( p -> {
+                String[] str = new String[3];
+                str[0] = p.getNumber();
+                str[1] = Util.getPrecisionString(p.getForce(),0);
+                str[2] = Util.getPrecisionString(p.getDisplacement(),1);
+                int count = p.getCount();
+                for (int i = 0; i < count; i++){
+                    strs.add(str);
+                }
+            });
+            //变形和内力
+            Double[][][] forceAndDisplacement = GetExcelValue.getDamperDisEnergyForceAndDeformation(basePath + "\\excel\\工作簿3.xlsx");
+            int size = Math.min(parameter_x_y.size(),Math.min(strs.size(),Math.min(forceAndDisplacement[0].length,forceAndDisplacement[1].length)));
+            if (parameter_x_y.size() != size || strs.size() != size || forceAndDisplacement[0].length != size || forceAndDisplacement[1].length != size){
+                System.out.println("$$$$$$$$$$$$$$  数量不一致");
+                System.out.println("$$$$$$$$$   \n总根数 ： " + strs.size() + "\n汇总表了数量 ： " + parameter_x_y.size()
+                        + "\n内力的数量： " + forceAndDisplacement[0].length + "\n变形的数量 ： " + forceAndDisplacement[1].length);
+            }
+            int modelRow = 3;
+            XWPFTableRow row = table16.getRow(modelRow);
+            Double maxForce;
+            Double maxDisplacement;
+            for (int i = 0; i < size; i++){
+                table16.addRow(row, i + modelRow);
+                row = table16.getRow(i + modelRow);
+                dealCellSM(row.getCell(0),parameter_x_y.get(i).getCadNumber());
+                dealCellSM(row.getCell(1),strs.get(i)[0]);
+                dealCellSM(row.getCell(2),strs.get(i)[1]);
+                dealCellSM(row.getCell(3),strs.get(i)[2]);
+                maxForce = 0D;
+                maxDisplacement = 0D;
+                for (int j = 1; j <= 7 ; j++){
+                    dealCellSM(row.getCell(j + 3),Util.getPrecisionString(forceAndDisplacement[0][i][j],0));
+                    dealCellSM(row.getCell(j + 10),Util.getPrecisionString(forceAndDisplacement[1][i][j],1));
+                    maxForce = Math.max(maxForce,forceAndDisplacement[0][i][j]);
+                    maxDisplacement = Math.max(maxDisplacement,forceAndDisplacement[1][i][j]);
+                }
+                dealCellSM(row.getCell(18),Util.getPrecisionString(maxForce,0));
+                dealCellSM(row.getCell(19),Util.getPrecisionString(maxDisplacement,1));
+            }
+            table16.removeRow(modelRow);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   小震下各BRB的内力及变形表  异常");
+        }
+    }
+
+
+    /**
+     * 小震最不利组合下BRB内力表
+     * @param table17
+     */
+    private static void insertBRBForceTable(XWPFTable table17) {
+        System.out.println("=========================================================");
+        System.out.println("处理 小震最不利组合下BRB内力表");
+        try {
+            List<FloorParameter> floor_parameter = data.FLOOR_PARAMETER;
+            List<Parameter> parameter_x_y = data.PARAMETER_X_Y;
+            ArrayList<String[]> strs = new ArrayList<>();
+            floor_parameter.forEach( p -> {
+                String[] str = new String[2];
+                str[0] = p.getNumber();
+                str[1] = Util.getPrecisionString(p.getForce(),0);
+                int count = p.getCount();
+                for (int i = 0; i < count; i++){
+                    strs.add(str);
+                }
+            });
+            //变形和内力
+            Double[][] tbs = GetExcelValue.getDamperDisEnergyTB(basePath + "\\excel\\工作簿3.xlsx");
+            int size = Math.min(parameter_x_y.size(),Math.min(strs.size(),tbs.length));
+            if (parameter_x_y.size() != size || strs.size() != size || tbs.length != size){
+                System.out.println("$$$$$$$$$$$$$$  数量不一致");
+                System.out.println("$$$$$$$$$   \n总根数 ： " + strs.size() + "\n汇总表了数量 ： " + parameter_x_y.size()
+                       + "\n变形的数量 ： " + tbs.length);
+            }
+            XWPFTableRow row;
+            Double maxForce;
+            Double maxDisplacement;
+            for (int i = 0; i < size; i++){
+                table17.createRow();
+                row = table17.getRow(i + 1);
+                dealCellSM(row.getCell(0),parameter_x_y.get(i).getCadNumber());
+                dealCellSM(row.getCell(1),strs.get(i)[0]);
+                dealCellSM(row.getCell(2),strs.get(i)[1]);
+                dealCellSM(row.getCell(3),Util.getPrecisionString(parameter_x_y.get(i).getAxisForce(),0));
+                dealCellSM(row.getCell(4),Util.getPrecisionString(tbs[i][1],0));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$   小震最不利组合下BRB内力表  异常");
+        }
+    }
+
+
+
+    /**
+     * 小震下BRB地震剪力及倾覆力矩占比表
+     *  减震结构楼层总倾覆力矩
+     * @param table18
+     */
+    private static void insertBRBShearForceAndMoment(XWPFTable table18) {
+        System.out.println("=========================================================");
+        System.out.println("处理 小震下BRB地震剪力及倾覆力矩占比表  减震结构楼层总倾覆力矩");
+        try {
+            String[][][] shearNot = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
+            Double[] floorH = data.FLOOR_H;
+            XWPFTableRow row10;
+            int floor = Math.min(floorH.length,Math.min(shearNot[0].length,shearNot[1].length));
+            if (floor != floorH.length || floor != shearNot[0].length || floor != shearNot[1].length){
+                System.out.println("$$$$$$$$$$$$$$  数量不一致");
+                System.out.println(" 材料表里的楼层数 ：" + floorH.length + "  工作簿3 里的楼层数 X ： "+ shearNot[0].length + "  Y :  " + shearNot[1].length );
+            }
+            for (int i = 0; i < floor; i++) {
+                table18.createRow();
+                row10 = table18.getRow(i + 3);
+                for (int j = 0; j < 12; j++) {
+                    row10.addNewTableCell();
+                }
+
+                //插入值
+                dealCellSM(row10.getCell(0), String.valueOf(floor - i));
+                for (int j = 1; j < 8; j++) {
+                    dealCellSM(row10.getCell(j), Util.getPrecisionString(Double.valueOf(Integer.valueOf(shearNot[0][floor - i - 1][j - 1]) * floorH[floor - i - 1] / 1000 ),0));
+                    dealCellSM(row10.getCell(j + 7), Util.getPrecisionString(Double.valueOf(Integer.valueOf(shearNot[1][floor - i - 1][j - 1]) * floorH[floor - i - 1] / 1000 ),0));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理  减震结构楼层总倾覆力矩  发生异常");
+        }
+    }
+
 
     /**
      * 地震波下结构X/Y方向的弹性能
@@ -1067,8 +1198,8 @@ public class InsertToWord {
      * @param table24
      */
     private static void insertFloorDisplaceAngle(XWPFTable table23, XWPFTable table24) {
-        System.out.println("\n处理  大震下非减震和减震的结构层间位移角表");
         System.out.println("==================================================");
+        System.out.println("\n处理  大震下非减震和减震的结构层间位移角表");
         try {
             //非减震结构层间位移
             String[][][] displaceAngleNot = GetExcelValue.getDisplaceAngle(basePath + "\\excel\\工作簿4.xlsx", 0);
@@ -1082,17 +1213,8 @@ public class InsertToWord {
             }
 
             //更改表头的有效列的名称
-            XWPFTableRow row23 = table23.getRow(2);
-            XWPFTableRow row24 = table24.getRow(2);
-//            String name = null;
-//            for (int i = 0; i < 7; i++) {
-//                name = getName1(valueCol, i);
-//                dealCellSM(row23.getCell(1 + i), name);
-//                dealCellSM(row23.getCell(9 + i), name);
-//                dealCellSM(row24.getCell(1 + i), name);
-//                dealCellSM(row24.getCell(9 + i), name);
-//            }
-
+            XWPFTableRow row23 ;
+            XWPFTableRow row24 ;
 
             int floor = Math.min(displaceAngleNot[0].length, displaceAngle[0].length);
             floor = Math.min(floor, floorh.length);
@@ -1207,54 +1329,36 @@ public class InsertToWord {
      * 粘滞阻尼器性能规格表
      *
      * @param table25
-     * @param table26
-     * @param table1  table1 的部分数据来源于table24   和   table25
-     *                单独写方法时 table24和table25获取到的各行的对象都一样，无法获取数据，所以直接就写在一个方法里
+     * @param table4
      */
-    private static void maxEarthquakeDapmerForceDisplace(XWPFTable table25, XWPFTable table26, XWPFTable table1) {
+    private static void maxEarthquakeDapmerForceDisplace(XWPFTable table25,  XWPFTable table4) {
         System.out.println("\n处理  结构各层阻尼器最大出力及位移包络值汇总表");
         try {
 
-            //X方向  //原来工作簿11
-            Double[][][] valueX = GetExcelValue.getEarthquakeDamperDisEnergyX(basePath + "\\excel\\工作簿5.xlsx");
-            //阻尼器形变
-            Double[][] shapeX = valueX[0];
-            //阻尼器内力
-            Double[][] forceX = valueX[1];
-
-            //Y方向
-            //原来是工作簿12
-            Double[][][] valueY = GetExcelValue.getEarthquakeDamperDisEnergyY(basePath + "\\excel\\工作簿5.xlsx");
-            //阻尼器形变
-            Double[][] shapeY = valueY[0];
-            //阻尼器内力
-            Double[][] forceY = valueY[1];
-
-            //获取有效列
-            Integer[] valueCol = Util.getValueCol(shapeX);
-            if (valueCol == null) {
-                System.out.println("有效的列无法确定");
+            List<FloorParameter> floor_parameter = data.FLOOR_PARAMETER;
+            List<Parameter> parameter_x_y = data.PARAMETER_X_Y;
+            ArrayList<String[]> strs = new ArrayList<>();
+            Integer[] countArray = new Integer[floor_parameter.size()];
+            int kk = 0;
+            for (FloorParameter p : floor_parameter) {
+                String[] str = new String[3];
+                str[0] = p.getNumber();
+                str[1] = Util.getPrecisionString(p.getForce(),0);
+                str[2] = Util.getPrecisionString(p.getDisplacement(),1);
+                int count = p.getCount();
+                countArray[kk++] = p.getCount();
+                for (int i = 0; i < count; i++){
+                    strs.add(str);
+                }
             }
-
-            //更改表头的有效列的名称
-            XWPFTableRow row25 = table25.getRow(3);
-            XWPFTableRow row26 = table26.getRow(3);
-//            String name = null;
-//            for (int i = 0; i < 3; i++) {
-//                name = getName(valueCol, i);
-//                dealCellSM(row25.getCell(4 + i), name);
-//                dealCellSM(row25.getCell(7 + i), name);
-//                dealCellSM(row26.getCell(4 + i), name);
-//                dealCellSM(row26.getCell(7 + i), name);
-//            }
-
-
-            //表头四行，
-            //数据行以表格第五行数据为模版进行加入数据
-            //新加入的行都插入到第六行
-            //最后模板行在数据行的最下边，数据插入完成将其删除
-            XWPFTableRow row250 = table25.getRow(4);
-            XWPFTableRow row260 = table26.getRow(4);
+            //变形和内力
+            Double[][][] forceAndDeformation = GetExcelValue.getDamperDisEnergyForceAndDeformation(basePath + "\\excel\\工作簿3.xlsx");
+            int size = Math.min(parameter_x_y.size(),Math.min(strs.size(),Math.min(forceAndDeformation[0].length,forceAndDeformation[1].length)));
+            if (parameter_x_y.size() != size || strs.size() != size || forceAndDeformation[0].length != size || forceAndDeformation[1].length != size){
+                System.out.println("$$$$$$$$$$$$$$  数量不一致");
+                System.out.println("$$$$$$$$$   \n总根数 ： " + strs.size() + "\n汇总表了数量 ： " + parameter_x_y.size()
+                        + "\n内力的数量： " + forceAndDeformation[0].length + "\n变形的数量 ： " + forceAndDeformation[1].length);
+            }
 
             //包络值     内力/形变/速度
             double forceEnvelope;
@@ -1267,163 +1371,76 @@ public class InsertToWord {
             double speedLimit;
 
             //各属性的较大值
-            Double[] propertyMax = {0d, 0d, 0d, 0d, 0d, 0d};
-
-            int floor = Math.min(shapeX.length, forceX.length);
-            floor = Math.min(floor, modelNo[0].length);
-            floor = Math.min(floor, modelNo[1].length);
-            if (floor != shapeX.length || floor != forceY.length || floor != modelNo[0].length || floor != modelNo[1].length) {
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$ CAD编号数量与原始表格里的数据的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            }
-            for (int i = 0; i < floor; i++) {
-
-                table25.addRow(row250, 5);
-                table26.addRow(row260, 5);
-
-                row25 = table25.getRow(5);
-                row26 = table26.getRow(5);
-
-                //插入CAD编号
-                dealCellSM(row25.getCell(0), modelNo[0][floor - 1 - i]);
-                dealCellSM(row26.getCell(0), modelNo[1][floor - 1 - i]);
-                //插入模型编号
-                dealCellSM(row25.getCell(1), Util.getPrecisionString(forceX[floor - i - 1][0], 0));
-                dealCellSM(row26.getCell(1), Util.getPrecisionString(shapeY[floor - i - 1][0], 0));
-
-                //x方向
-                //数据值插入
-                dealCellSM(row25.getCell(4), Util.getPrecisionString(forceX[floor - i - 1][valueCol[0]], 0));
-                dealCellSM(row25.getCell(5), Util.getPrecisionString(forceX[floor - i - 1][valueCol[1]], 0));
-                dealCellSM(row25.getCell(6), Util.getPrecisionString(forceX[floor - i - 1][valueCol[2]], 0));
-                dealCellSM(row25.getCell(7), Util.getPrecisionString(forceX[floor - i - 1][valueCol[3]], 0));
-                dealCellSM(row25.getCell(8), Util.getPrecisionString(forceX[floor - i - 1][valueCol[4]], 0));
-                dealCellSM(row25.getCell(9), Util.getPrecisionString(forceX[floor - i - 1][valueCol[5]], 0));
-                dealCellSM(row25.getCell(10), Util.getPrecisionString(forceX[floor - i - 1][valueCol[6]], 0));
-
-                dealCellSM(row25.getCell(11), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[0]], 2));
-                dealCellSM(row25.getCell(12), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[1]], 2));
-                dealCellSM(row25.getCell(13), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[2]], 2));
-                dealCellSM(row25.getCell(14), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[3]], 2));
-                dealCellSM(row25.getCell(15), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[4]], 2));
-                dealCellSM(row25.getCell(16), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[5]], 2));
-                dealCellSM(row25.getCell(17), Util.getPrecisionString(shapeX[floor - i - 1][valueCol[6]], 2));
-
-
-                //y方向
-                dealCellSM(row26.getCell(4), Util.getPrecisionString(forceY[floor - i - 1][valueCol[0]], 0));
-                dealCellSM(row26.getCell(5), Util.getPrecisionString(forceY[floor - i - 1][valueCol[1]], 0));
-                dealCellSM(row26.getCell(6), Util.getPrecisionString(forceY[floor - i - 1][valueCol[2]], 0));
-                dealCellSM(row26.getCell(7), Util.getPrecisionString(forceY[floor - i - 1][valueCol[3]], 0));
-                dealCellSM(row26.getCell(8), Util.getPrecisionString(forceY[floor - i - 1][valueCol[4]], 0));
-                dealCellSM(row26.getCell(9), Util.getPrecisionString(forceY[floor - i - 1][valueCol[5]], 0));
-                dealCellSM(row26.getCell(10), Util.getPrecisionString(forceY[floor - i - 1][valueCol[6]], 0));
-
-                dealCellSM(row26.getCell(11), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
-                dealCellSM(row26.getCell(12), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[1]], 2));
-                dealCellSM(row26.getCell(13), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[2]], 2));
-                dealCellSM(row26.getCell(14), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[3]], 2));
-                dealCellSM(row26.getCell(15), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[4]], 2));
-                dealCellSM(row26.getCell(16), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[5]], 2));
-                dealCellSM(row26.getCell(17), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[6]], 2));
-
-//                dealCellSM(row26.getCell(4), Util.getPrecisionString(forceY[floor - i - 1][valueCol[0]], 0));
-//                dealCellSM(row26.getCell(5), Util.getPrecisionString(forceY[floor - i - 1][valueCol[1]], 0));
-//                dealCellSM(row26.getCell(6), Util.getPrecisionString(forceY[floor - i - 1][valueCol[2]], 0));
-//                dealCellSM(row26.getCell(7), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
-//                dealCellSM(row26.getCell(8), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[1]], 2));
-//                dealCellSM(row26.getCell(9), Util.getPrecisionString(shapeY[floor - i - 1][valueCol[0]], 2));
+            Double[][] propertyMaxs = new Double[countArray.length][4];
+            Util.setZero(propertyMaxs,0D,Double.class);
+            Double[] propertyMax;
+            //表头四行，
+            //数据行以表格第五行数据为模版进行加入数据
+            //新加入的行都插入到第六行
+            //最后模板行在数据行的最下边，数据插入完成将其删除
+            int modelRow = 3;
+            XWPFTableRow row250 = table25.getRow(modelRow);
+            XWPFTableRow row25;
+            int number ;
+            for (int i = 0; i < size; i++) {
+                table25.addRow(row250, modelRow + i);
+                row25 = table25.getRow(modelRow + i);
+                dealCellSM(row25.getCell(0),parameter_x_y.get(i).getCadNumber());
+                dealCellSM(row25.getCell(1),strs.get(i)[0]);
+                dealCellSM(row25.getCell(2),strs.get(i)[1]);
+                dealCellSM(row25.getCell(3),strs.get(i)[2]);
+                for (int j = 1; j <= 7 ; j++){
+                    dealCellSM(row25.getCell(j + 3),Util.getPrecisionString(forceAndDeformation[0][i][j],0));
+                    dealCellSM(row25.getCell(j + 10),Util.getPrecisionString(forceAndDeformation[1][i][j],1));
+                }
 
                 //x方向
                 //包络值
-                forceEnvelope = Math.max(forceX[floor - i - 1][valueCol[0]],
-                        Math.max(forceX[floor - i - 1][valueCol[1]],
-                                Math.max(forceX[floor - i - 1][valueCol[2]],
-                                        Math.max(forceX[floor - i - 1][valueCol[3]],
-                                                Math.max(forceX[floor - i - 1][valueCol[4]],
-                                                        Math.max(forceX[floor - i - 1][valueCol[5]],
-                                                                forceX[floor - i - 1][valueCol[6]]))))));
-
-                shapeEnvelope = Math.max(shapeX[floor - i - 1][valueCol[0]],
-                        Math.max(shapeX[floor - i - 1][valueCol[1]],
-                                Math.max(shapeX[floor - i - 1][valueCol[2]],
-                                        Math.max(shapeX[floor - i - 1][valueCol[3]],
-                                                Math.max(shapeX[floor - i - 1][valueCol[4]],
-                                                        Math.max(shapeX[floor - i - 1][valueCol[5]],
-                                                                shapeX[floor - i - 1][valueCol[6]]))))));
+                forceEnvelope = Util.getMaxValue(forceAndDeformation[0][i],1,8);
+                shapeEnvelope = Util.getMaxValue(forceAndDeformation[1][i],1,8);
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row25.getCell(2).getText()), 1d / Double.valueOf(row25.getCell(3).getText()));
+
                 dealCellSM(row25.getCell(18), Util.getPrecisionString(forceEnvelope, 0));
                 dealCellSM(row25.getCell(19), Util.getPrecisionString(shapeEnvelope, 2));
-//                dealCellSM(row25.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
+
                 //极限值
                 speedLimit = speedEnvelope * 1.2d;
                 forceLimit = Math.pow(speedLimit, Double.valueOf(row25.getCell(3).getText())) * Double.valueOf(row25.getCell(2).getText());
                 shapeLimit = shapeEnvelope * 1.2d;
-//                dealCellSM(row25.getCell(15), Util.getPrecisionString(speedLimit, 0));
                 dealCellSM(row25.getCell(20), Util.getPrecisionString(forceLimit, 0));
                 dealCellSM(row25.getCell(21), Util.getPrecisionString(shapeLimit, 1));
-                //较大值比较选择
-                propertyMax[0] = Math.max(propertyMax[0], forceEnvelope);
-                propertyMax[1] = Math.max(propertyMax[1], shapeEnvelope);
-                propertyMax[2] = Math.max(propertyMax[2], speedEnvelope);
-                propertyMax[3] = Math.max(propertyMax[3], forceLimit);
-                propertyMax[4] = Math.max(propertyMax[4], shapeLimit);
-                propertyMax[5] = Math.max(propertyMax[5], speedLimit);
 
-
-                //y方向
-                //包络值
-                forceEnvelope = Math.max(forceY[floor - i - 1][valueCol[0]],
-                        Math.max(forceY[floor - i - 1][valueCol[1]],
-                                Math.max(forceY[floor - i - 1][valueCol[2]],
-                                        Math.max(forceY[floor - i - 1][valueCol[3]],
-                                                Math.max(forceY[floor - i - 1][valueCol[4]],
-                                                        Math.max(forceY[floor - i - 1][valueCol[5]],
-                                                                forceY[floor - i - 1][valueCol[6]]))))));
-
-                shapeEnvelope = Math.max(shapeY[floor - i - 1][valueCol[0]],
-                        Math.max(shapeY[floor - i - 1][valueCol[1]],
-                                Math.max(shapeY[floor - i - 1][valueCol[2]],
-                                        Math.max(shapeY[floor - i - 1][valueCol[3]],
-                                                Math.max(shapeY[floor - i - 1][valueCol[4]],
-                                                        Math.max(shapeY[floor - i - 1][valueCol[5]],
-                                                        shapeY[floor - i - 1][valueCol[6]]))))));
-
-                speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row26.getCell(2).getText()), 1d / Double.valueOf(row26.getCell(3).getText()));
-                dealCellSM(row26.getCell(18), Util.getPrecisionString(forceEnvelope, 0));
-                dealCellSM(row26.getCell(19), Util.getPrecisionString(shapeEnvelope, 2));
-//                dealCellSM(row26.getCell(12), Util.getPrecisionString(speedEnvelope, 0));
-                //极限值
-                speedLimit = speedEnvelope * 1.2d;
-                forceLimit = Math.pow(speedLimit, Double.valueOf(row26.getCell(3).getText())) * Double.valueOf(row26.getCell(2).getText());
-                shapeLimit = shapeEnvelope * 1.2d;
-//                dealCellSM(row26.getCell(15), Util.getPrecisionString(speedEnvelope, 0));
-                dealCellSM(row26.getCell(20), Util.getPrecisionString(forceLimit, 0));
-                dealCellSM(row26.getCell(21), Util.getPrecisionString(shapeLimit, 1));
+                number = getNumber(countArray,i);
+                propertyMax = propertyMaxs[number];
 
                 //较大值比较选择
                 propertyMax[0] = Math.max(propertyMax[0], forceEnvelope);
                 propertyMax[1] = Math.max(propertyMax[1], shapeEnvelope);
-                propertyMax[2] = Math.max(propertyMax[2], speedEnvelope);
-                propertyMax[3] = Math.max(propertyMax[3], forceLimit);
-                propertyMax[4] = Math.max(propertyMax[4], shapeLimit);
-                propertyMax[5] = Math.max(propertyMax[5], speedLimit);
+
+                propertyMax[2] = Math.max(propertyMax[2], forceLimit);
+                propertyMax[3] = Math.max(propertyMax[3], shapeLimit);
             }
             //移除模板行
-            table25.removeRow(floor + 4);
-            table26.removeRow(floor + 4);
+            table25.removeRow(modelRow);
 
-            //处理table1
-            dealCellSM(table1.getRow(1).getCell(3), Util.getPrecisionString(propertyMax[0], 0));
-            dealCellSM(table1.getRow(1).getCell(4), Util.getPrecisionString(propertyMax[1], 0));
-            dealCellSM(table1.getRow(1).getCell(5), Util.getPrecisionString(propertyMax[3], 0));
-            dealCellSM(table1.getRow(1).getCell(6), Util.getPrecisionString(propertyMax[4], 0));
-
-            dealCellSM(table1.getRow(1).getCell(8), (floor * 2) + "");
-            dealCellSM(table1.getRow(2).getCell(1), (floor * 2) + "");
+            //处理表4；
+            insertRestricePerformance(table4,propertyMaxs);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理 结构各层阻尼器最大出力及位移包络值汇总表发生异常");
         }
+    }
+
+    private static int getNumber(Integer[] array, int i){
+        int count = 0;
+        i++;
+      for (int k = 0; k < array.length ; k++){
+          count += array[k];
+          if (i <= count){
+              return k;
+          }
+      }
+      return array.length;
     }
 
 
@@ -1433,10 +1450,9 @@ public class InsertToWord {
      *
      * @param table29
      * @param table30
-     * @param table31
      */
-    private static void calculateTable(XWPFTable table29, XWPFTable table30, XWPFTable table31) {
-        System.out.println("======================================= 计算最后三个表的数据 =======================================================");
+    private static void calculateTable(XWPFTable table29, XWPFTable table30) {
+        System.out.println("======================================= 计算最后两个个表的数据 =======================================================");
         //计算参数所在的位置
         String paramsPath = basePath + "\\excel\\材料数据.xlsx";
 
@@ -1452,8 +1468,8 @@ public class InsertToWord {
         CaculateTable.caculateTable2(table30, caculateParams[1]);
 
         //4.悬臂墙配筋验算
-        System.out.println("=============================== 悬臂墙配筋验算 =======================================");
-        CaculateTable.caculateTable3(table31, caculateParams[2]);
+//        System.out.println("=============================== 悬臂墙配筋验算 =======================================");
+//        CaculateTable.caculateTable3(table31, caculateParams[2]);
     }
 
     /**
@@ -1483,12 +1499,176 @@ public class InsertToWord {
     }
 
 
+
+    /**
+     * CAD模型编号表（SAP模型中编号）
+     *
+     * @param table4
+     */
+    private static void insertCADModelNo(XWPFTable table4) {
+        System.out.println("=================================================");
+        System.out.println("\n处理 CAD模型编号表（SAP模型中编号）");
+
+        String[][] x_CAD = data.CAD_MODEL_X;
+        String[][] y_CAD = data.CAD_MODEL_Y;
+        List<String> listX = new ArrayList<>();
+        List<String> listY = new ArrayList<>();
+
+//      x方向
+        boolean flage = true;
+        String value;
+        XWPFTableRow row;
+        int countX = 0;
+        for (int i = 0; flage; i++) {
+            flage = false;
+
+            for (int k = 0; k < x_CAD.length; k++) {
+                try {
+                    value = x_CAD[k][i];
+                    if (null != value && !"".equals(value)) {
+                        row = table4.createRow();
+                        dealCellSM(row.getCell(0), value);
+                        dealCellSM(row.getCell(1), ++countX + "");
+                        listX.add(value);
+                        flage = true;
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        //y方向
+        int countY = 0;
+        int count = countX;
+        flage = true;
+        for (int i = 0; flage; i++) {
+            flage = false;
+            for (int k = 0; k < y_CAD.length; k++) {
+                try {
+                    value = y_CAD[k][i];
+                    if (null != value && !"".equals(value)) {
+                        row = table4.getRow(countY + 1);
+                        dealCellSM(row.getCell(2), value);
+                        dealCellSM(row.getCell(3), ++count + "");
+                        countY++;
+                        listY.add(value);
+                        if (countY > countX) {
+                            System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
+                            flage = false;
+                            break;
+                        }
+                        flage = true;
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (countX != countX) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$ CAD模型里X方向和Y方向的数量不一致 $$$$$$$$$$$$$$$$$$$$$$$$$");
+        }
+        //CAD模型中的编号
+        modelNo = new String[2][Math.max(listX.size(), listY.size())];
+        listX.toArray(modelNo[0]);
+        listY.toArray(modelNo[1]);
+        //SAP模型中编号
+        SPANo = new int[countX + countY];
+        for (int i = 0; i < SPANo.length; ) {
+            SPANo[i] = ++i;
+        }
+        System.out.println("============== CAD 编号 ====================");
+        System.out.println(listX);
+        System.out.println(listY);
+        System.out.println("============== SPA 编号 ====================");
+        System.out.println(Arrays.asList(SPANo));
+    }
+
+
+    /**
+     * 金属阻尼器表格的处理
+     *
+     * @param table5
+     * @param table2
+     */
+    private static void insertMetalDamper(XWPFTable table5, XWPFTable table2) {
+        System.out.println("=================================================");
+        System.out.println("金属阻尼器表格的处理");
+        try {
+            //获取CAD 编号
+            String[][] modelValue = getModelNo(table2);
+            String[][] x_CAD = data.CAD_MODEL_X;
+            String[][] y_CAD = data.CAD_MODEL_Y;
+
+            //获取每一层对应的编号位置  位置从0开始
+            Map<Integer, List<Integer>> map = getFloorOnPositionOfModelNO(modelValue);
+
+            //X方向
+            //原来是工作簿4
+            Double[][][] valueX = GetExcelValue.getEarthquakeDamperDisEnergyX(basePath + "\\excel\\工作簿3.xlsx");
+            //阻尼器形变
+            Double[][] shapeX = valueX[0];
+            //阻尼器内力
+            Double[][] forceX = valueX[1];
+
+            //Y方向
+            //原来是工作簿4
+            Double[][][] valueY = GetExcelValue.getEarthquakeDamperDisEnergyY(basePath + "\\excel\\工作簿3.xlsx");
+            //阻尼器形变
+            Double[][] shapeY = valueY[0];
+            //阻尼器内力
+            Double[][] forceY = valueY[1];
+
+            //获取层高数据  此处数值单位为 豪米
+            Double[] floorH = data.FLOOR_H;
+            if (map.size() != floorH.length) {
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$  金属阻尼器表格  CAD模型编号的楼层数量与层高表里的楼层数量不一致   $$$$$$$$$$$$$  ");
+            }
+            Integer floor = map.size();
+
+            //每一层对应的金属阻尼器弹性时程平均出力 和	金属阻尼器弹性时程平均位移
+            Map<Integer, Double> forceXAvg = getAvgValueGroupByFloorFromTable(map, forceX);
+            Map<Integer, Double> forceYAvg = getAvgValueGroupByFloorFromTable(map, forceY);
+            Map<Integer, Double> shapeXAvg = getAvgValueGroupByFloorFromTable(map, shapeX);
+            Map<Integer, Double> shapeYAvg = getAvgValueGroupByFloorFromTable(map, shapeY);
+//
+//表头四行，
+            //数据行以表格第五行数据为模版进行加入数据
+            //新加入的行都插入到第六行
+            //最后模板行在数据行的最下边，数据插入完成将其删除
+            XWPFTableRow row500 = table5.getRow(4);
+            XWPFTableRow row;
+            // Y方向
+            for (Integer i = floor; i >= 1; i--) {
+                for (int k = y_CAD[i - 1].length - 1; k >= 0; k--) {
+                    table5.addRow(row500, 5);
+                    row = table5.getRow(5);
+                    dealCellSM(row.getCell(0), y_CAD[i - 1][k]);
+                    insertTable(row, i, floorH, forceYAvg, shapeYAvg);
+                }
+            }
+            //X方向
+            for (Integer i = floor; i >= 1; i--) {
+                for (int k = x_CAD[i - 1].length - 1; k >= 0; k--) {
+                    table5.addRow(row500, 5);
+                    row = table5.getRow(5);
+                    dealCellSM(row.getCell(0), x_CAD[i - 1][k]);
+                    insertTable(row, i, floorH, forceXAvg, shapeXAvg);
+                }
+            }
+            table5.removeRow(table5.getRows().size() - 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$金属阻尼器表格的处理时发生异常");
+        }
+    }
+
+
     private static void init() {
         System.out.println("==========初始化   通过excel获取模型中的编号，层高，累计层高 ===============");
         String path1 = basePath + "\\excel\\材料数据.xlsx";
         String path2 = basePath + "\\excel\\参数表.xlsx";
-        data = GetExcelValue.init(path1,path2);
+        data = GetExcelValue.init(path1, path2);
     }
+
+
 
     /**
      * 根据CAD中的编号顺序确定每层所对应的编号位置
@@ -1712,3 +1892,5 @@ public class InsertToWord {
 //        in.close();
 //    }
 }
+
+

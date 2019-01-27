@@ -89,8 +89,9 @@ public class GetExcelValue {
 
                 //参数表里参数获取
                 System.out.println("参数表里参数获取");
-                data.PARAMETER_X = ExcelCaculateParams.getParameter(excel2.getSheetAt(0));
-                data.PARAMETER_X = ExcelCaculateParams.getParameter(excel2.getSheetAt(1));
+//                data.PARAMETER_X = ExcelCaculateParams.getParameter(excel2.getSheetAt(0),1);
+//                data.PARAMETER_Y = ExcelCaculateParams.getParameter(excel2.getSheetAt(1),1);
+                data.PARAMETER_X_Y = ExcelCaculateParams.getParameter(excel2.getSheetAt(2),0);
 
                 //将楼层参数列表里层高和累计层高单独获取出来赋值到data的属性里边
                 Double[][] f = getArrayFromList(data.FLOOR_PARAMETER);
@@ -394,6 +395,72 @@ public class GetExcelValue {
     }
 
     /**
+     * 减震器内力，位移
+     * @param path
+     * @return
+     */
+    public static Double[][][] getDamperDisEnergyForceAndDeformation(String path){
+        FileInputStream e = null;
+        try {
+            e = new FileInputStream(path);
+            XSSFWorkbook excel = new XSSFWorkbook(e);
+            System.out.println("==============================");
+            System.out.println( path);
+            System.out.println("XY方向的力");
+            Double[][] force = ExcelDamper.getDamperValueXAndY(excel.getSheetAt(1),3,6);
+            System.out.println("XY方向的变形");
+            Double[][] deformation = ExcelDamper.getDamperValueXAndY(excel.getSheetAt(0),2,5);
+            return new Double[][][]{force,deformation};
+        } catch (FileNotFoundException e1) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "没找到");
+            return null;
+        } catch (IOException e1) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "处理异常");
+            return null;
+        } finally {
+            if (e != null) {
+                try {
+                    e.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * SAP2000中最不利组合轴力
+     * @param path
+     * @return
+     */
+    public static Double[][] getDamperDisEnergyTB(String path){
+        FileInputStream e = null;
+        try {
+            e = new FileInputStream(path);
+            XSSFWorkbook excel = new XSSFWorkbook(e);
+            System.out.println("==============================");
+            System.out.println( path);
+            System.out.println("SAP2000中最不利组合轴力");
+            return ExcelDamper.getDamperValueTB(excel.getSheetAt(1),3,6);
+        } catch (FileNotFoundException e1) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "没找到");
+            return null;
+        } catch (IOException e1) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "处理异常");
+            return null;
+        } finally {
+            if (e != null) {
+                try {
+                    e.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
      * Y方向各地震波下Y方向阻尼器耗能
      *
      * @param path
@@ -552,7 +619,8 @@ public class GetExcelValue {
             //柱
             Map<String, Object> pillarParams = ExcelCaculateParams.getParamsOfPillar(excel);
             //悬臂
-            Map<String, Object> cantileverParams = ExcelCaculateParams.getParamsOfCantilever(excel);
+            Map<String, Object> cantileverParams = null;
+//            Map<String, Object> cantileverParams = ExcelCaculateParams.getParamsOfCantilever(excel);
 
             return new Map[]{girderParams, pillarParams, cantileverParams};
         } catch (FileNotFoundException e1) {

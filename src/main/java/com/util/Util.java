@@ -38,6 +38,94 @@ public class Util {
         System.out.println();
     }
 
+    /**
+     * 获取数组指定位置段的最大值
+     * @param values
+     * @param start
+     * @param end
+     * @return
+     */
+    public static Double getMaxValue(Double[] values,int start ,int end){
+        if (values == null || values.length < 1){
+            throw new NullPointerException(" 获取最大值时 ，参数为空");
+        }
+        Double max = values[start];
+       for ( int i = start ; i < end ; i++){
+           max = Math.max(max,values[i]);
+       }
+        return max;
+    }
+
+    /**
+     * 获取数组指定位置段的最大值
+     * @param values
+     * @param start
+     * @param end
+     * @return
+     */
+    public static Double getMaxValue(String[] values,int start ,int end){
+        if (values == null || values.length < 1){
+            throw new NullPointerException(" 获取最大值时 ，参数为空");
+        }
+        Double max = Double.valueOf(values[start]);
+        for ( int i = start ; i < end ; i++){
+            max = Math.max(max,Double.valueOf(values[i]));
+        }
+        return max;
+    }
+
+    /**
+     * 获取数最大值
+     * @param values
+     * @return
+     */
+    public static Double getMaxValue(Double ...values){
+        if (values == null || values.length < 1){
+            throw new NullPointerException(" 获取最大值时 ，参数为空");
+        }
+        Double max = values[0];
+        for (Double v : values) {
+            max = Math.max(max,v);
+        }
+        return max;
+    }
+
+
+    /**
+     * 获取数最大值
+     * @param values
+     * @return
+     */
+    public static Double getMaxValue(String ...values){
+        if (values == null || values.length < 1){
+            throw new NullPointerException(" 获取最大值时 ，参数为空");
+        }
+        Double max = Double.valueOf(values[0]);
+        for (String v : values) {
+            max = Math.max(max,Double.valueOf(v));
+        }
+        return max;
+    }
+
+    /**
+     * 将元素之为0
+     * @param value
+     */
+    public static <T>  void setZero(Object object,T value,Class<T> c){
+       if (object instanceof Object[] ){
+           Object[] objects = (Object[]) object;
+           int count = objects.length;
+           for (int i = 0; i < count; i++){
+               if (null == objects[i]){
+                   objects[i] = value;
+               }else {
+                     setZero(objects[i],value,c);
+               }
+           }
+       }else {
+           object = value;
+       }
+    }
 
     /**
      * 四舍五入 返回String类型

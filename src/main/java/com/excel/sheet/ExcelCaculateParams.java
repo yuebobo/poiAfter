@@ -503,9 +503,11 @@ public class ExcelCaculateParams {
      * @param sheet
      * @return
      */
-    public static List<Parameter> getParameter(XSSFSheet sheet) {
+    public static List<Parameter> getParameter(XSSFSheet sheet,int tableHead) {
         Iterator it = sheet.iterator();
-        it.next();
+        for (int i = 0; i < tableHead; i++){
+            it.next();
+        }
         XSSFRow row;
         List<Parameter> list = new ArrayList<>();
         Parameter parameter;
@@ -526,6 +528,7 @@ public class ExcelCaculateParams {
             parameter.setElasticModulus(Double.valueOf(Util.getValueFromXssfcell(row.getCell(6))));
             parameter.setPkAxisLength(Double.valueOf(Util.getValueFromXssfcell(row.getCell(7))));
             parameter.setStiffness(Double.valueOf(Util.getValueFromXssfcell(row.getCell(8))));
+            parameter.setAxisForce(Double.valueOf(Util.getValueFromXssfcell(row.getCell(10))));
             System.out.println(parameter.toString());
             list.add(parameter);
         }

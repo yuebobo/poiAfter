@@ -10,7 +10,7 @@ public class Parameter
 {
 
     /**
-     * cad编号
+     * cad编号(支持类别)
      */
     private String cadNumber;
 
@@ -49,6 +49,11 @@ public class Parameter
      * 屈曲约束支撑的刚度
      */
     private Double stiffness;
+
+    /**
+     * 小震最不利组合轴力
+     */
+    private Double axisForce;
 
     public String getCadNumber() {
         return cadNumber;
@@ -122,6 +127,14 @@ public class Parameter
         this.stiffness = stiffness;
     }
 
+    public Double getAxisForce() {
+        return axisForce;
+    }
+
+    public void setAxisForce(Double axisForce) {
+        this.axisForce = axisForce;
+    }
+
     @Override
     public String toString() {
         return "Parameter{" +
@@ -134,6 +147,7 @@ public class Parameter
                 "     " + elasticModulus +
                 "     " + pkAxisLength +
                 "     " + stiffness +
+                "     " + axisForce +
                 '}';
     }
 }

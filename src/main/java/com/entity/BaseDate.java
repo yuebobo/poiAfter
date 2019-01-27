@@ -52,5 +52,6 @@ public class BaseDate {
     //参数表里的数据
     public List<Parameter> PARAMETER_X;
     public List<Parameter> PARAMETER_Y;
+    public List<Parameter> PARAMETER_X_Y;
 
 }
