@@ -1,9 +1,6 @@
 package com.file;
 
-import com.entity.BaseDate;
-import com.entity.Constants;
-import com.entity.FloorParameter;
-import com.entity.Parameter;
+import com.entity.*;
 import com.excel.sheet.*;
 import com.util.Util;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -321,7 +318,7 @@ public class GetExcelValue {
             //原来sheet为0
             String[][][] value = ExcelFloorDisplaceShear.getShear(excel.getSheetAt(sheet), 0);
             System.out.println("\n" + path);
-            System.out.println("=================== 层间剪力 =========================");
+            System.out.println("=================== 层间剪力 ===================");
             printArrayDisplace(value);
             return value;
         } catch (FileNotFoundException e1) {
@@ -443,6 +440,38 @@ public class GetExcelValue {
             System.out.println( path);
             System.out.println("SAP2000中最不利组合轴力");
             return ExcelDamper.getDamperValueTB(excel.getSheetAt(1),3,6);
+        } catch (FileNotFoundException e1) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "没找到");
+            return null;
+        } catch (IOException e1) {
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "处理异常");
+            return null;
+        } finally {
+            if (e != null) {
+                try {
+                    e.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 阻尼器出力
+     * @param path
+     * @return
+     */
+    public static Map<Integer, ValueNote>[] getDamperDisEnergyX_Y(String path){
+        FileInputStream e = null;
+        try {
+            e = new FileInputStream(path);
+            XSSFWorkbook excel = new XSSFWorkbook(e);
+            System.out.println("==============================");
+            System.out.println( path);
+            System.out.println("阻尼器出力");
+            return ExcelDamper.getDamperValueX_Y(excel.getSheetAt(3),1,4,5);
         } catch (FileNotFoundException e1) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + path + "没找到");
             return null;

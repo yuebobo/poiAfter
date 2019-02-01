@@ -3,6 +3,7 @@ package com.insert;
 import com.entity.BaseDate;
 import com.entity.FloorParameter;
 import com.entity.Parameter;
+import com.entity.ValueNote;
 import com.excel.sheet.ExcelDamper;
 import com.file.GetExcelValue;
 import com.txt.TxtGetValue;
@@ -83,26 +84,20 @@ public class InsertToWord {
 
             //小震下BRB地震剪力及倾覆力矩占比表
             //减震结构楼层总倾覆力矩
-            insertBRBShearForceAndMoment(tables.get(19));
             //楼层阻尼器倾覆力矩之和
-            //表 20
             //阻尼器倾覆力矩/总倾覆力矩
-            // 表 21
+            insertBRBShearForceAndMoment(tables.get(19),tables.get(20),tables.get(21));
 
             //阻尼器出力与楼层剪力占比
-            //表22 23
+            insertDamperFloorRatio(tables.get(22), tables.get(23));
 
 //            大震下减震结构X向层间位移角
-            //表 25 26
             insertFloorDisplaceAngle(tables.get(25), tables.get(26));
-
 
             //结构各层阻尼器最大出力及位移包络值汇总
             maxEarthquakeDapmerForceDisplace(tables.get(27), tables.get(3));
-////
-            //===============================================================
-//
-//            //地震波下结构X/Y方向的弹性能
+
+            //地震波下结构X/Y方向的弹性能
 //            insertElasticPropertyOfBaseEarthquake(tables.get(17), tables.get(18));
 ////
 ////            //各地震波下X/Y方向阻尼器耗能
@@ -803,17 +798,25 @@ public class InsertToWord {
 
     /**
      * 小震下BRB地震剪力及倾覆力矩占比表
-     *  减震结构楼层总倾覆力矩
+     *  1.减震结构楼层总倾覆力矩
+     *  2.楼层阻尼器倾覆力矩之和
+     *  3.阻尼器倾覆力矩/总倾覆力矩
      * @param table18
      */
-    private static void insertBRBShearForceAndMoment(XWPFTable table18) {
+    private static void insertBRBShearForceAndMoment(XWPFTable table18,XWPFTable table19,XWPFTable table20) {
         System.out.println("=========================================================");
-        System.out.println("处理 小震下BRB地震剪力及倾覆力矩占比表  减震结构楼层总倾覆力矩");
+        System.out.println("处理 小震下BRB地震剪力及倾覆力矩占比表 ");
+
+        //1.减震结构楼层总倾覆力矩
+        String[][][] shearNot = new String[0][][];
+        Double[] floorH = data.FLOOR_H;
+        int floor = 0;
+        XWPFTableRow row10;
         try {
-            String[][][] shearNot = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
-            Double[] floorH = data.FLOOR_H;
-            XWPFTableRow row10;
-            int floor = Math.min(floorH.length,Math.min(shearNot[0].length,shearNot[1].length));
+            System.out.println("处理 1.减震结构楼层总倾覆力矩");
+            shearNot = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
+            floorH = data.FLOOR_H;
+            floor = Math.min(floorH.length,Math.min(shearNot[0].length,shearNot[1].length));
             if (floor != floorH.length || floor != shearNot[0].length || floor != shearNot[1].length){
                 System.out.println("$$$$$$$$$$$$$$  数量不一致");
                 System.out.println(" 材料表里的楼层数 ：" + floorH.length + "  工作簿3 里的楼层数 X ： "+ shearNot[0].length + "  Y :  " + shearNot[1].length );
@@ -836,7 +839,79 @@ public class InsertToWord {
             e.printStackTrace();
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理  减震结构楼层总倾覆力矩  发生异常");
         }
+
+        //2.楼层阻尼器倾覆力矩之和
+        Map<Integer, ValueNote>[] maps;
+        Map<Integer, Double[][]> mapX = null;
+        Map<Integer, Double[][]> mapY = null;
+        try {
+            System.out.println("处理 2.楼层阻尼器倾覆力矩之和");
+            maps = GetExcelValue.getDamperDisEnergyX_Y(basePath + "\\excel\\工作簿3.xlsx");
+            mapX = Util.mapToArray(maps[0]);
+            mapY = Util.mapToArray(maps[1]);
+            floor = floorH.length;
+            if (floor > mapX.size() || floor > mapY.size()){
+                System.out.println("$$$$$$$$$$$$$$  数量不一致");
+                System.out.println(" 材料表里的楼层数 ：" + floorH.length + "  工作簿3 里的楼层数 X ： "+ mapX.size() + "  Y :  " + mapY.size());
+            }
+            for (int i = 0 ,k = 0; i < floor; i++) {
+                if (!mapX.containsKey(floor - i) && !mapX.containsKey(floor - i)) continue;
+                table19.createRow();
+                row10 = table19.getRow(k++ + 3);
+                for (int j = 0; j < 12; j++) {
+                    row10.addNewTableCell();
+                }
+                if (mapX.containsKey(floor - i)){
+                    for (int j = 1; j < 8; j++){
+                        dealCellSM(row10.getCell(j),Util.getPrecisionString(mapX.get(floor - i)[0][j - 1] * floorH[floor - i - 1] / 1000,0));
+                    }
+                }
+                if (mapY.containsKey(floor - i)){
+                    for (int j = 1; j < 8; j++){
+                        dealCellSM(row10.getCell(j + 7),Util.getPrecisionString(mapY.get(floor - i)[1][j - 1] * floorH[floor - i - 1] / 1000,0));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理  楼层阻尼器倾覆力矩之和  发生异常");
+        }
+
+        //3.阻尼器倾覆力矩/总倾覆力矩
+        try {
+            System.out.println("处理 3.阻尼器倾覆力矩/总倾覆力矩");
+            Double sum;
+            for (int i = 0,k = 0; i < floor; i++) {
+                if (!mapX.containsKey(floor - i) && !mapX.containsKey(floor - i)) continue;
+                table20.createRow();
+                row10 = table20.getRow(k++ + 3);
+                for (int j = 0; j < 12; j++) {
+                    row10.addNewTableCell();
+                }
+                if (mapX.containsKey(floor - i)){
+                    sum = 0d;
+                    for (int j = 1; j < 8; j++){
+                        dealCellSM(row10.getCell(j),Util.getPrecisionString(100 * mapX.get(floor - i)[0][j - 1]/ Double.valueOf(shearNot[0][floor - i - 1][j - 1]),2));
+                        sum += mapX.get(floor - i)[0][j - 1]/ Double.valueOf(shearNot[0][floor - i - 1][j - 1]);
+                    }
+                    dealCellSM(row10.getCell(8),Util.getPrecisionString(100 * sum / 7,2));
+                }
+                if (mapY.containsKey(floor - i)){
+                    sum = 0d;
+                    for (int j = 1; j < 8; j++){
+                        dealCellSM(row10.getCell(j + 8),Util.getPrecisionString(100 * mapY.get(floor - i)[1][j - 1]/ Double.valueOf(shearNot[1][floor - i - 1][j - 1]),2));
+                        sum += mapY.get(floor - i)[1][j - 1]/ Double.valueOf(shearNot[1][floor - i - 1][j - 1]);
+                    }
+                    dealCellSM(row10.getCell(16),Util.getPrecisionString(100 * sum / 7,2));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理  阻尼器倾覆力矩/总倾覆力矩  发生异常");
+        }
     }
+
+
 
 
     /**
@@ -1082,111 +1157,103 @@ public class InsertToWord {
      * 该表分为三部分
      * 最左边部分的数据由 "减震结构层间剪力" 获得
      * 中间部分的数据由  “阻尼器耗能“表里的阻尼器处理部分获得
-     * 中间部分表格的数据获取方式特殊   在“阻尼器耗能表” 的最左边为CAD中的编号，如  X-2-1 ，Y-3-2   中间的数字表示楼层，
+     * 中间部分表格的数据获取方式特殊   在“阻尼器耗能表” 的最左边为CAD中的编号，如  X1 ，Y2   中间的数字表示楼层，
      * 当前处理表的中间不分的数据是由相同楼层的数据之和得到的，某些楼层可能空缺
      * 最右边的数据是由中间的数据除以右边的数据得到的，平均值为比值的平均值
      *
      * @param table21
      * @param table22
      */
-    private static void insertDamperFloorRatio(XWPFTable table21, XWPFTable table22, XWPFTable table2) {
+    private static void insertDamperFloorRatio(XWPFTable table21, XWPFTable table22) {
+        System.out.println("=========================================================");
         System.out.println(" 处理 阻尼器出力与楼层剪力占比 ");
-        //X方向
-        //原来是工作簿7
-        Double[][][] valueX = GetExcelValue.getEarthquakeDamperDisEnergyX(basePath + "\\excel\\工作簿3.xlsx");
-        //阻尼器内力
-        Double[][] forceX = valueX[1];
+        try {
+            Map<Integer, ValueNote>[] maps = GetExcelValue.getDamperDisEnergyX_Y(basePath + "\\excel\\工作簿3.xlsx");
+            Map<Integer, Double[][]> mapX = Util.mapToArray(maps[0]);
+            Map<Integer, Double[][]> mapY = Util.mapToArray(maps[1]);
 
-        //Y方向
-        //原来是工作簿8
-        Double[][][] valueY = GetExcelValue.getEarthquakeDamperDisEnergyY(basePath + "\\excel\\工作簿3.xlsx");
-        //阻尼器内力
-        Double[][] forceY = valueY[1];
+            // 减震结构层间剪力
+            String[][][] shear = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
 
-        //阻尼器内力  第一数为模型中的编号 如force[0][0][0]，force[0][1][0]
-        Double[][][] force = {forceX, forceY};
+            //楼层数
+            int floor = shear[0].length;
+            //用于某楼层 阻尼器出力之和的有无
+            boolean flageX;
+            boolean flageY;
+            Double sumX = 0d;
+            Double sumY = 0d;
+            XWPFTableRow row21;
+            XWPFTableRow row22;
+            for (int i = 0; i < floor; i++) {
+                //按照表头的单元格数进行添加
+                table21.createRow();
+                table22.createRow();
 
-        //获取出对应楼层的求和的值
-        Map<Integer, Double[]>[] maps = getDamperFloorAdd(table2, force);
+                //表头有4行
+                row21 = table21.getRow(i + 4);
+                row22 = table22.getRow(i + 4);
 
-        // 减震结构层间剪力
-        String[][][] shear = GetExcelValue.getShear(basePath + "\\excel\\工作簿3.xlsx", 3);
+                //表头与表身差22个单元格
+                for (int j = 0; j < 22; j++) {
+                    row21.addNewTableCell();
+                    row22.addNewTableCell();
+                }
 
-        //楼层数
-        int floor = shear[0].length;
-        //用于某楼层 阻尼器出力之和的有无
-        boolean flageX = false;
-        boolean flageY = false;
-        Double sumX = 0d;
-        Double sumY = 0d;
-        XWPFTableRow row21;
-        XWPFTableRow row22;
-        for (int i = 0; i < floor; i++) {
-            //按照表头的单元格数进行添加
-            table21.createRow();
-            table22.createRow();
+                //插入值 楼层
+                dealCellSM(row21.getCell(0), String.valueOf(floor - i));
+                dealCellSM(row22.getCell(0), String.valueOf(floor - i));
 
-            //表头有4行
-            row21 = table21.getRow(i + 4);
-            row22 = table22.getRow(i + 4);
+                if (mapX.containsKey(floor - i)) {
+                    flageX = true;
+                } else {
+                    flageX = false;
+                }
+                if (mapY.containsKey(floor - i)) {
+                    flageY = true;
+                } else {
+                    flageY = false;
+                }
+                sumX = 0d;
+                sumY = 0d;
+                for (int j = 1; j < 8; j++) {
+                    //减震结构层间剪力 x与y
+                    dealCellSM(row21.getCell(j), shear[0][floor - i - 1][j - 1]);
+                    dealCellSM(row22.getCell(j), shear[1][floor - i - 1][j - 1]);
 
-            //表头与表身差25个单元格
-            for (int j = 0; j < 22; j++) {
-                row21.addNewTableCell();
-                row22.addNewTableCell();
-            }
+                    //楼层阻尼器出力之和
+                    if (flageX) {
+                        dealCellSM(row21.getCell(j + 7), Util.getPrecisionString(mapX.get(floor - i)[0][j - 1], 0));
+                        dealCellSM(row21.getCell(j + 14), Util.getPrecisionString(100 * mapX.get(floor - i)[0][j - 1] / Double.valueOf(shear[0][floor - i - 1][j - 1]), 2));
+                        sumX += 100 * mapX.get(floor - i)[0][j - 1] / Double.valueOf(shear[0][floor - i - 1][j - 1]);
+                    } else {
+                        dealCellSM(row21.getCell(j + 7), "\\");
+                        dealCellSM(row21.getCell(j + 14), "\\");
+                    }
+                    if (flageY) {
+                        dealCellSM(row22.getCell(j + 7), Util.getPrecisionString(mapY.get(floor - i)[1][j - 1], 0));
+                        dealCellSM(row22.getCell(j + 14), Util.getPrecisionString(100 * mapY.get(floor - i)[1][j - 1] / Double.valueOf(shear[1][floor - i - 1][j - 1]), 2));
+                        sumY += 100 * mapY.get(floor - i)[1][j - 1] / Double.valueOf(shear[1][floor - i - 1][j - 1]);
+                    } else {
+                        dealCellSM(row22.getCell(j + 7), "\\");
+                        dealCellSM(row22.getCell(j + 14), "\\");
+                    }
+                }
 
-            if (maps[0].containsKey(floor - i)) {
-                flageX = true;
-            } else {
-                flageX = false;
-            }
-            if (maps[1].containsKey(floor - i)) {
-                flageY = true;
-            } else {
-                flageY = false;
-            }
-
-            //插入值
-            dealCellSM(row21.getCell(0), String.valueOf(floor - i));
-            dealCellSM(row22.getCell(0), String.valueOf(floor - i));
-            sumX = 0d;
-            sumY = 0d;
-            for (int j = 1; j < 8; j++) {
-                //减震结构层间剪力 x与y
-                dealCellSM(row21.getCell(j), shear[0][floor - i - 1][j - 1]);
-                dealCellSM(row22.getCell(j), shear[1][floor - i - 1][j - 1]);
-
-                //楼层阻尼器出力之和
                 if (flageX) {
-                    dealCellSM(row21.getCell(j + 7), Util.getPrecisionString(maps[0].get(floor - i)[j - 1], 0));
-                    dealCellSM(row21.getCell(j + 14), Util.getPrecisionString(100 * maps[0].get(floor - i)[j - 1] / Double.valueOf(shear[0][floor - i - 1][j - 1]), 2));
-                    sumX += 100 * maps[0].get(floor - i)[j - 1] / Double.valueOf(shear[0][floor - i - 1][j - 1]);
+                    dealCellSM(row21.getCell(22), Util.getPrecisionString(sumX / 7, 2));
                 } else {
-                    dealCellSM(row21.getCell(j + 7), "\\");
-                    dealCellSM(row21.getCell(j + 14), "\\");
+                    dealCellSM(row21.getCell(22), "\\");
                 }
+
                 if (flageY) {
-                    dealCellSM(row22.getCell(j + 7), Util.getPrecisionString(maps[1].get(floor - i)[j - 1], 0));
-                    dealCellSM(row22.getCell(j + 14), Util.getPrecisionString(100 * maps[1].get(floor - i)[j - 1] / Double.valueOf(shear[1][floor - i - 1][j - 1]), 2));
-                    sumY += 100 * maps[1].get(floor - i)[j - 1] / Double.valueOf(shear[1][floor - i - 1][j - 1]);
+                    dealCellSM(row22.getCell(22), Util.getPrecisionString(sumY / 7, 2));
                 } else {
-                    dealCellSM(row22.getCell(j + 7), "\\");
-                    dealCellSM(row22.getCell(j + 14), "\\");
+                    dealCellSM(row22.getCell(22), "\\");
                 }
             }
-            if (flageX) {
-                dealCellSM(row21.getCell(22), Util.getPrecisionString(sumX / 7, 2));
-            } else {
-                dealCellSM(row21.getCell(22), "\\");
-            }
-
-            if (flageY) {
-                dealCellSM(row22.getCell(22), Util.getPrecisionString(sumY / 7, 2));
-            } else {
-                dealCellSM(row22.getCell(22), "\\");
-            }
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + "处理 阻尼器出力与楼层剪力占比 发生异常");
         }
     }
 

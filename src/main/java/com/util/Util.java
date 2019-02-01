@@ -10,6 +10,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -259,6 +260,30 @@ public class Util {
             data[1][i - 1][6] = Util.getPrecisionString(valueNote.getR2y(), precision);
         }
         return data;
+    }
+
+    public static Map<Integer,Double[][]> mapToArray(Map<Integer,ValueNote> map){
+        Map<Integer,Double[][]> maps = new HashMap<>();
+        map.forEach((k,v )-> {
+            Double[][] value = new Double[2][7];
+            value[0][0] = v.getT1x();
+            value[0][1] = v.getT2x();
+            value[0][2] = v.getT3x();
+            value[0][3] = v.getT4x();
+            value[0][4] = v.getT5x();
+            value[0][5] = v.getR1x();
+            value[0][6] = v.getR2x();
+
+            value[1][0] = v.getT1y();
+            value[1][1] = v.getT2y();
+            value[1][2] = v.getT3y();
+            value[1][3] = v.getT4y();
+            value[1][4] = v.getT5y();
+            value[1][5] = v.getR1y();
+            value[1][6] = v.getR2y();
+            maps.put(k,value);
+        });
+        return maps;
     }
 
     /**
