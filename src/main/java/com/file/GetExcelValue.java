@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -749,12 +750,16 @@ public class GetExcelValue {
     }
 
     private static Double[][] getArrayFromList(List<FloorParameter> list){
-        Double[][] value = new Double[2][list.size()];
+        List<Double> fh = new ArrayList<>();
+        List<Double> afh = new ArrayList<>();
        for (int i = 0; i < list.size() ; i++){
-           value[0][i] = list.get(i).getFloorH();
-           value[1][i] = list.get(i).getAddUpFloorH();
+           if (0 == list.get(i).getFloorH()){
+               continue;
+           }
+           fh.add(list.get(i).getFloorH());
+           afh.add(list.get(i).getAddUpFloorH());
        }
-       return value;
+       return new Double[][]{Util.collectToArray(fh,Double.class), Util.collectToArray(afh,Double.class)};
     }
 
 }

@@ -266,7 +266,7 @@ public class InsertToWord {
                 row = table7.getRow(i + modelRow);
                 dealCellSM(row.getCell(0),parameter_x_y.get(i).getCadNumber());
                 dealCellSM(row.getCell(1),parameter_x_y.get(i).getType());
-                dealCellSM(row.getCell(2),parameter_x_y.get(i).getBrand());
+                dealCellSM(row.getCell(2),Util.getPrecisionString(parameter_x_y.get(i).getBrand(),0));
                 dealCellSM(row.getCell(3),Util.getPrecisionString(parameter_x_y.get(i).getPk_1(),0));
                 dealCellSM(row.getCell(4),Util.getPrecisionString(parameter_x_y.get(i).getPk_2(),0));
                 dealCellSM(row.getCell(5),Util.getPrecisionString(parameter_x_y.get(i).getArea(),0));
@@ -681,7 +681,7 @@ public class InsertToWord {
                 }
 
                 dealCellSM(row14.getCell(9), Util.getPrecisionString(notXSum / 7, 0));
-                dealCellSM(row14.getCell(17), Util.getPrecisionString(notXSum / 7, 0));
+                dealCellSM(row14.getCell(17), Util.getPrecisionString(notYSum / 7, 0));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -855,12 +855,13 @@ public class InsertToWord {
                 System.out.println(" 材料表里的楼层数 ：" + floorH.length + "  工作簿3 里的楼层数 X ： "+ mapX.size() + "  Y :  " + mapY.size());
             }
             for (int i = 0 ,k = 0; i < floor; i++) {
-                if (!mapX.containsKey(floor - i) && !mapX.containsKey(floor - i)) continue;
+                if (!mapX.containsKey(floor - i) && !mapY.containsKey(floor - i)) continue;
                 table19.createRow();
                 row10 = table19.getRow(k++ + 3);
                 for (int j = 0; j < 12; j++) {
                     row10.addNewTableCell();
                 }
+                dealCellSM(row10.getCell(0),String.valueOf(floor - i));
                 if (mapX.containsKey(floor - i)){
                     for (int j = 1; j < 8; j++){
                         dealCellSM(row10.getCell(j),Util.getPrecisionString(mapX.get(floor - i)[0][j - 1] * floorH[floor - i - 1] / 1000,0));
@@ -882,12 +883,13 @@ public class InsertToWord {
             System.out.println("处理 3.阻尼器倾覆力矩/总倾覆力矩");
             Double sum;
             for (int i = 0,k = 0; i < floor; i++) {
-                if (!mapX.containsKey(floor - i) && !mapX.containsKey(floor - i)) continue;
+                if (!mapX.containsKey(floor - i) && !mapY.containsKey(floor - i)) continue;
                 table20.createRow();
                 row10 = table20.getRow(k++ + 3);
-                for (int j = 0; j < 12; j++) {
+                for (int j = 0; j < 14; j++) {
                     row10.addNewTableCell();
                 }
+                dealCellSM(row10.getCell(0),String.valueOf(floor - i));
                 if (mapX.containsKey(floor - i)){
                     sum = 0d;
                     for (int j = 1; j < 8; j++){
@@ -1419,7 +1421,7 @@ public class InsertToWord {
                 }
             }
             //变形和内力
-            Double[][][] forceAndDeformation = GetExcelValue.getDamperDisEnergyForceAndDeformation(basePath + "\\excel\\工作簿3.xlsx");
+            Double[][][] forceAndDeformation = GetExcelValue.getDamperDisEnergyForceAndDeformation(basePath + "\\excel\\工作簿5.xlsx");
             int size = Math.min(parameter_x_y.size(),Math.min(strs.size(),Math.min(forceAndDeformation[0].length,forceAndDeformation[1].length)));
             if (parameter_x_y.size() != size || strs.size() != size || forceAndDeformation[0].length != size || forceAndDeformation[1].length != size){
                 System.out.println("$$$$$$$$$$$$$$  数量不一致");

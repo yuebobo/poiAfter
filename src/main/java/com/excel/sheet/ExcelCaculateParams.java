@@ -477,7 +477,7 @@ public class ExcelCaculateParams {
         while (it.hasNext()) {
             floorParameter = new FloorParameter();
             row = (XSSFRow) it.next();
-            str = Util.getValueFromXssfcell(row.getCell(0));
+            str = Util.getValueFromXssfcell(row.getCell(2));
             if (null == str || "".equals(str) || "0".equals(str) || "0.0".equals(str)) {
                 break;
             }

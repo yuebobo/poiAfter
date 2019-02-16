@@ -8,6 +8,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,6 +39,16 @@ public class Util {
         }
         System.out.println();
     }
+
+    public static <T>  T[] collectToArray(Collection<T> collection,Class<T> tClass){
+        T[] ts = (T[]) Array.newInstance(tClass,collection.size());
+        int i = 0;
+        for (T t :collection) {
+            ts[i++] = t;
+        }
+        return ts;
+    }
+
 
     /**
      * 获取数组指定位置段的最大值
