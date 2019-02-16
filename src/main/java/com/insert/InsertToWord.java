@@ -1474,8 +1474,10 @@ public class InsertToWord {
 
                 //极限值
                 speedLimit = speedEnvelope * 1.2d;
-                forceLimit = Math.pow(speedLimit, Double.valueOf(row25.getCell(3).getText())) * Double.valueOf(row25.getCell(2).getText());
                 shapeLimit = shapeEnvelope * 1.2d;
+
+//                forceLimit = Math.pow(speedLimit, Double.valueOf(row25.getCell(3).getText())) * Double.valueOf(row25.getCell(2).getText());
+                forceLimit = (shapeLimit - Double.valueOf(strs.get(i)[2])) * (Double.valueOf(strs.get(i)[1]) / Double.valueOf(strs.get(i)[2]) ) * 0.02 + Double.valueOf(strs.get(i)[1]);
                 dealCellSM(row25.getCell(20), Util.getPrecisionString(forceLimit, 0));
                 dealCellSM(row25.getCell(21), Util.getPrecisionString(shapeLimit, 1));
 
