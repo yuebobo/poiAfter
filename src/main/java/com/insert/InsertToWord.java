@@ -246,13 +246,13 @@ public class InsertToWord {
             if (map.size() != floorH.length) {
                 System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$  金属阻尼器表格  CAD模型编号的楼层数量与层高表里的楼层数量不一致   $$$$$$$$$$$$$  ");
             }
-            Integer floor = map.size();
+            Integer floor = floorH.length;
 
             //每一层对应的金属阻尼器弹性时程平均出力 和	金属阻尼器弹性时程平均位移
-            Map<Integer, Double> forceXAvg = getAvgValueGroupByFloorFromTable(map, forceX);
-            Map<Integer, Double> forceYAvg = getAvgValueGroupByFloorFromTable(map, forceY);
-            Map<Integer, Double> shapeXAvg = getAvgValueGroupByFloorFromTable(map, shapeX);
-            Map<Integer, Double> shapeYAvg = getAvgValueGroupByFloorFromTable(map, shapeY);
+            Map<Integer, Double> forceXAvg = getAvgValueGroupByFloorFromTable( map,forceX);
+            Map<Integer, Double> forceYAvg = getAvgValueGroupByFloorFromTable( map,forceY);
+            Map<Integer, Double> shapeXAvg = getAvgValueGroupByFloorFromTable(map,shapeX);
+            Map<Integer, Double> shapeYAvg = getAvgValueGroupByFloorFromTable(map,shapeY);
 //
 //表头四行，
             //数据行以表格第五行数据为模版进行加入数据
@@ -261,21 +261,23 @@ public class InsertToWord {
             XWPFTableRow row500 = table5.getRow(4);
             XWPFTableRow row;
             // Y方向
+            int z = forceYAvg.size();
             for (Integer i = floor; i >= 1; i--) {
                 for (int k = y_CAD[i - 1].length - 1; k >= 0; k--) {
                     table5.addRow(row500, 5);
                     row = table5.getRow(5);
                     dealCellSM(row.getCell(0), y_CAD[i - 1][k]);
-                    insertTable(row, i, floorH, forceYAvg, shapeYAvg);
+                    insertTable(row, i, --z,floorH, forceYAvg, shapeYAvg);
                 }
             }
+            z = forceXAvg.size();
             //X方向
             for (Integer i = floor; i >= 1; i--) {
                 for (int k = x_CAD[i - 1].length - 1; k >= 0; k--) {
                     table5.addRow(row500, 5);
                     row = table5.getRow(5);
                     dealCellSM(row.getCell(0), x_CAD[i - 1][k]);
-                    insertTable(row, i, floorH, forceXAvg, shapeXAvg);
+                    insertTable(row, i, --z,floorH, forceXAvg, shapeXAvg);
                 }
             }
             table5.removeRow(table5.getRows().size() - 1);
@@ -285,12 +287,12 @@ public class InsertToWord {
         }
     }
 
-    private static void insertTable(XWPFTableRow row, int i, Double[] floorH, Map<Integer, Double> forceAvg, Map<Integer, Double> shapeAvg) {
+    private static void insertTable(XWPFTableRow row, int i, int k,Double[] floorH, Map<Integer, Double> forceAvg, Map<Integer, Double> shapeAvg) {
         Double v;
         dealCellSM(row.getCell(1), i + ""); //楼层
         dealCellSM(row.getCell(2), floorH[i - 1].intValue() + "");
-        dealCellSM(row.getCell(3), Util.getPrecisionString(forceAvg.get(i), 0));
-        dealCellSM(row.getCell(4), Util.getPrecisionString(shapeAvg.get(i), 2));
+        dealCellSM(row.getCell(3), Util.getPrecisionString(forceAvg.get(k), 0));
+        dealCellSM(row.getCell(4), Util.getPrecisionString(shapeAvg.get(k), 2));
         dealCellSM(row.getCell(5), Util.getPrecisionString(Double.valueOf(row.getCell(3).getText()) / Double.valueOf(row.getCell(4).getText()), 0));
 
         v = 0.4 * Double.valueOf(row.getCell(6).getText()) * Double.valueOf(row.getCell(7).getText()) * Double.valueOf(row.getCell(8).getText()) / (600 * (floorH[i - 1] - 600));
@@ -1512,22 +1514,22 @@ public class InsertToWord {
     /**
      * 按楼层获取相应位置的数的平均数
      *
-     * @param param
      * @return
      */
     private static Map<Integer, Double> getAvgValueGroupByFloorFromTable(Map<Integer, List<Integer>> param, Double[][] valueArray) {
         Map<Integer, Double> map = new HashMap<>();
         Double valueSum = 0d;
         List<Integer> positionList;
+        int z = 0;
         for (int i = 1; i <= param.size(); i++) {
             positionList = param.get(i);
-            valueSum = 0d;
             for (Integer posi : positionList) {
+                valueSum = 0d;
                 for (int k = 1; k < 8; k++) {
                     valueSum += valueArray[posi][k];
                 }
+                map.put(z++, valueSum / 7.00);
             }
-            map.put(i, valueSum / 14.00);
         }
         return map;
     }
