@@ -1,6 +1,7 @@
 package com.insert;
 
 import com.entity.BaseDate;
+import com.excel.sheet.ExcelCaculateParams;
 import com.file.GetExcelValue;
 import com.txt.TxtGetValue;
 import com.util.Util;
@@ -84,17 +85,22 @@ public class InsertToWord {
 //            //层间位移角
             insertFloorDisplaceAngle(tables.get(24), tables.get(25));
 //
-//
+            //减震结构顶点大震弹性位移与弹塑性位移对比
+            elasticityAndPlasticOfTopFloorDisplace(tables.get(26), tables.get(27), tables.get(28));
+
 //            //结构各层阻尼器最大出力及位移包络值汇总
 //            //粘滞阻尼器性能规格表
-            maxEarthquakeDapmerForceDisplace(tables.get(26), tables.get(27), tables.get(3));
-//
+            maxEarthquakeDapmerForceDisplace(tables.get(29), tables.get(30), tables.get(3));
+
+            //最大阻尼力与楼层层间屈服剪力比值
+            insertYieldForce(tables.get(31),tables.get(32),tables.get(4));
+
             //金属阻尼器 表5
             insertMetalDamper(tables.get(5), tables.get(4));
 
 //            //计算最后几个表里的值
 //            //减震器周边子结构的设计计算方法
-            calculateTable(tables.get(28), tables.get(29), tables.get(30));
+            calculateTable(tables.get(33), tables.get(34), tables.get(35));
 
         } catch (FileNotFoundException e) {
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$" + wordPath + "没找到");
@@ -1235,6 +1241,82 @@ public class InsertToWord {
         }
     }
 
+
+    /**
+     * 大震下减震结构弹性塑性顶层位移
+     */
+    private static void elasticityAndPlasticOfTopFloorDisplace(XWPFTable table25,XWPFTable table26,XWPFTable table27){
+        System.out.println("\n 处理  大震下减震结构弹性塑性顶层位移  ");
+        System.out.println("==================================================");
+        try {
+            String[][][] plastic = GetExcelValue.getDisplaceAngle(basePath + "\\excel\\工作簿5.xlsx", 2);
+            String[][][] elasticity = GetExcelValue.getDisplaceAngle(basePath + "\\excel\\工作簿6.xlsx", 0);
+            double value;
+            double elaX = 0d;
+            double elaY = 0d;
+            double plaX = 0d;
+            double plaY = 0d;
+
+            for (int i = 0; i < 7; i++) {
+                //弹性 x向
+                value = 0d;
+                for (int k = 0; k < elasticity[0].length; k++) {
+                    value += Double.valueOf(elasticity[0][k][i]);
+                }
+                dealCellSM(table25.getRow(2).getCell(i), Util.getPrecisionString(value, 1));
+                elaX += value;
+
+                //弹性 y向
+                value = 0d;
+                for (int k = 0; k < elasticity[0].length; k++) {
+                    value += Double.valueOf(elasticity[1][k][i]);
+                }
+                dealCellSM(table25.getRow(2).getCell(i + 7), Util.getPrecisionString(value, 1));
+                elaY += value;
+
+                //塑性 x向
+                value = 0d;
+                for (int k = 0; k < plastic[0].length; k++) {
+                    value += Double.valueOf(plastic[0][k][i]);
+                }
+                dealCellSM(table26.getRow(2).getCell(i), Util.getPrecisionString(value, 1));
+                plaX += value;
+
+                //塑性 y向
+                value = 0d;
+                for (int k = 0; k < plastic[0].length; k++) {
+                    value += Double.valueOf(plastic[1][k][i]);
+                }
+                dealCellSM(table26.getRow(2).getCell(i + 7), Util.getPrecisionString(value, 1));
+                plaY += value;
+            }
+
+            elaX = elaX / 7;
+            elaY = elaY / 7;
+            plaX = plaX / 7;
+            plaY = plaY / 7;
+
+            dealCellSM(table25.getRow(2).getCell(14), Util.getPrecisionString(elaX, 1));
+            dealCellSM(table25.getRow(2).getCell(15), Util.getPrecisionString(elaY, 1));
+
+            dealCellSM(table26.getRow(2).getCell(14), Util.getPrecisionString(plaX, 1));
+            dealCellSM(table26.getRow(2).getCell(15), Util.getPrecisionString(plaY, 1));
+
+
+            dealCellSM(table27.getRow(1).getCell(1), Util.getPrecisionString(elaX, 1));
+            dealCellSM(table27.getRow(1).getCell(2), Util.getPrecisionString(plaX, 1));
+            dealCellSM(table27.getRow(1).getCell(3), Util.getPrecisionString(elaX / plaX, 1));
+
+            dealCellSM(table27.getRow(2).getCell(1), Util.getPrecisionString(elaY, 1));
+            dealCellSM(table27.getRow(2).getCell(2), Util.getPrecisionString(plaY, 1));
+            dealCellSM(table27.getRow(2).getCell(3), Util.getPrecisionString(elaY / plaY, 1));
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println(" $$$$$$$$$$$$$$$$$$$$$$$$$$$$ 处理 大震下减震结构弹性塑性顶层位移 发生异常 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        }
+    }
+
+
     /**
      * 结构各层阻尼器最大出力及位移包络值汇总
      * 粘滞阻尼器性能规格表
@@ -1495,6 +1577,107 @@ public class InsertToWord {
         }
     }
 
+    /**
+     * 最大阻尼力与楼层层间屈服剪力比值
+     * @param table31
+     * @param table32
+     */
+    private static void insertYieldForce(XWPFTable table31,XWPFTable table32,XWPFTable table2){
+        System.out.println(" 处理 最大阻尼力与楼层层间屈服剪力比值 ");
+        try {
+
+            //X方向
+            Double[][][] valueX = GetExcelValue.getEarthquakeDamperDisEnergyX(basePath + "\\excel\\工作簿5.xlsx");
+            //阻尼器内力
+            Double[][] forceX = valueX[1];
+
+            //Y方向
+            Double[][][] valueY = GetExcelValue.getEarthquakeDamperDisEnergyY(basePath + "\\excel\\工作簿5.xlsx");
+            //阻尼器内力
+            Double[][] forceY = valueY[1];
+
+            //阻尼器内力  第一数为模型中的编号 如force[0][0][0]，force[0][1][0]
+            Double[][][] force = {forceX, forceY};
+
+            //获取出对应楼层的求和的值
+            Map<Integer, Double[]>[] maps = getDamperFloorAdd(table2, force);
+
+            //层间屈服剪力
+            List<String>[] yieldForce = data.YIELD_FORCE;
+
+            //楼层数
+            int floor = yieldForce[0].size();
+
+            //X方向
+            Double sumX = 0d;
+            XWPFTableRow row31;
+            for (int i = 0, k = 0; i < floor; i++) {
+                if ("0".equals(yieldForce[0].get(floor - i - 1)) || yieldForce[0].get(floor - i - 1) == null) {
+                    continue;
+                }
+                if (!maps[0].containsKey(floor - i)) {
+                    continue;
+                }
+                //按照表头的单元格数进行添加
+                table31.createRow();
+                //表头有4行
+                row31 = table31.getRow(k++ + 3);
+
+                //表头与表身差9个单元格
+                for (int j = 0; j < 9; j++) {
+                    row31.addNewTableCell();
+                }
+
+                //插入值
+                dealCellSM(row31.getCell(0), String.valueOf(floor - i));
+                sumX = 0d;
+
+                for (int j = 1; j < 8; j++) {
+                    dealCellSM(row31.getCell(j), Util.getPrecisionString(maps[0].get(floor - i)[j - 1], 0));
+                    sumX += maps[0].get(floor - i)[j - 1];
+                }
+                dealCellSM(row31.getCell(8), Util.getPrecisionString(sumX / 7, 0));
+                dealCellSM(row31.getCell(9), yieldForce[0].get(floor - i - 1));
+                dealCellSM(row31.getCell(10), Util.getPrecisionString(100 * (sumX / 7) / Double.valueOf(yieldForce[0].get(floor - i - 1)), 0));
+            }
+
+            //X方向
+            Double sumY = 0d;
+            XWPFTableRow row32;
+            for (int i = 0, k = 0; i < floor; i++) {
+                if ("0".equals(yieldForce[1].get(floor - i - 1)) || yieldForce[1].get(floor - i - 1) == null) {
+                    continue;
+                }
+                if (!maps[1].containsKey(floor - i)) {
+                    continue;
+                }
+                //按照表头的单元格数进行添加
+                table32.createRow();
+
+                //表头有4行
+                row32 = table32.getRow(k++ + 3);
+
+                //表头与表身差9个单元格
+                for (int j = 0; j < 9; j++) {
+                    row32.addNewTableCell();
+                }
+
+                //插入值
+                dealCellSM(row32.getCell(0), String.valueOf(floor - i));
+                sumY = 0d;
+                for (int j = 1; j < 8; j++) {
+                    dealCellSM(row32.getCell(j), Util.getPrecisionString(maps[1].get(floor - i)[j - 1], 0));
+                    sumY += maps[1].get(floor - i)[j - 1];
+                }
+                dealCellSM(row32.getCell(8), Util.getPrecisionString(sumY / 7, 0));
+                dealCellSM(row32.getCell(9), yieldForce[1].get(floor - i - 1));
+                dealCellSM(row32.getCell(10), Util.getPrecisionString(100 * (sumY / 7) / Double.valueOf(yieldForce[1].get(floor - i - 1)), 0));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$ 处理 最大阻尼力与楼层层间屈服剪力比值 发生异常 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        }
+    }
 
     /**
      * 计算最后几个表里的值

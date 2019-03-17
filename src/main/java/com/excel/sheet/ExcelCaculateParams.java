@@ -459,4 +459,44 @@ public class ExcelCaculateParams {
     }
 
 
+
+    /**
+     * 非减震剪力获取
+     * 减震剪力获取
+     *
+     * @param sheet
+     */
+    public static List<String>[] getyieldForce(XSSFSheet sheet) {
+        List<String> fx = new ArrayList<>();
+        List<String> fy = new ArrayList<>();
+        XSSFRow row;
+        Iterator it = sheet.iterator();
+        it.next();
+        it.next();
+        String strX;
+        String strY;
+
+        while (it.hasNext()) {
+            row = (XSSFRow) it.next();
+            strX = Util.getValueFromXssfcell(row.getCell(5));
+            strY = Util.getValueFromXssfcell(row.getCell(6));
+            if (strX == null || "".equals(strX) || 0 == Double.valueOf(strX)) {
+                strX = "0";
+            }
+            if (strY == null || "".equals(strY) || 0 == Double.valueOf(strY)) {
+                strY = "0";
+            }
+            fx.add(strX);
+            fy.add(strY);
+        }
+
+        System.out.println("X方向 ：");
+        System.out.println(fx);
+        System.out.println("Y方向 ：");
+        System.out.println(fy);
+        return new List[]{fx, fy};
+    }
+
+
+
 }

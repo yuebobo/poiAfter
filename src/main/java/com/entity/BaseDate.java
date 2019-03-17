@@ -39,6 +39,9 @@ public class BaseDate {
     //非减震剪力
     public List[] NOT_FX_FY;
 
+    //层间屈服剪力
+    public List[] YIELD_FORCE;
+
     //梁
     public Map<String,Object> GIRDER_PARAMS ;
     //柱

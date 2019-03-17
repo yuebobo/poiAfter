@@ -61,6 +61,10 @@ public class GetExcelValue {
                 data.NOT_FX_FY = ExcelCaculateParams.getEarthquakeAndShear(excel.getSheetAt(6));
 
 
+                //层间屈服剪力
+                System.out.println("层间屈服剪力");
+                data.YIELD_FORCE = ExcelCaculateParams.getyieldForce(excel.getSheetAt(8));
+
                 //梁
 //				data.GIRDER_PARAMS = ExcelCaculateParams.getParamsOfGirder(excel);
 //				//柱
