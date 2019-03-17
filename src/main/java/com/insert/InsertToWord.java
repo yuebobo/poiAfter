@@ -1136,35 +1136,72 @@ public class InsertToWord {
                 }
 
                 //计算包络值
-                //包络值为该行的  这7个数值的最小值
-                envelopeX = floorh[i] / Math.max(Double.valueOf(displaceAngle[0][i][valueCol[0]]),
-                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[1]]),
-                                Math.max(Double.valueOf(displaceAngle[0][i][valueCol[2]]),
-                                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[3]]),
-                                                Math.max(Double.valueOf(displaceAngle[0][i][valueCol[4]]),
-                                                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[5]]),
-                                                                Double.valueOf(displaceAngle[0][i][valueCol[6]])))))));
-                envelopeXNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[0]]),
-                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[1]]),
-                                Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[2]]),
-                                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[3]]),
-                                                Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[4]]),
-                                                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[5]]),
-                                                                Double.valueOf(displaceAngleNot[0][i][valueCol[6]])))))));
-                envelopeY = floorh[i] / Math.max(Double.valueOf(displaceAngle[1][i][valueCol[0]]),
-                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[1]]),
-                                Math.max(Double.valueOf(displaceAngle[1][i][valueCol[2]]),
-                                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[3]]),
-                                                Math.max(Double.valueOf(displaceAngle[1][i][valueCol[4]]),
-                                                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[5]]),
-                                                                Double.valueOf(displaceAngle[1][i][valueCol[6]])))))));
-                envelopeYNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[0]]),
-                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[1]]),
-                                Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[2]]),
-                                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[3]]),
-                                                Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[4]]),
-                                                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[5]]),
-                                                                Double.valueOf(displaceAngleNot[1][i][valueCol[6]])))))));
+                //包络值为该行的  这7个数值的平均值
+
+                envelopeX = floorh[i] / Util.getAvg(
+                        Double.valueOf(displaceAngle[0][i][valueCol[0]]),
+                        Double.valueOf(displaceAngle[0][i][valueCol[1]]),
+                        Double.valueOf(displaceAngle[0][i][valueCol[2]]),
+                        Double.valueOf(displaceAngle[0][i][valueCol[3]]),
+                        Double.valueOf(displaceAngle[0][i][valueCol[4]]),
+                        Double.valueOf(displaceAngle[0][i][valueCol[5]]),
+                        Double.valueOf(displaceAngle[0][i][valueCol[6]]));
+
+                envelopeXNot = floorh[i] / Util.getAvg(
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[0]]),
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[1]]),
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[2]]),
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[3]]),
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[4]]),
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[5]]),
+                        Double.valueOf(displaceAngleNot[0][i][valueCol[6]]));
+
+                envelopeY = floorh[i] / Util.getAvg(
+                        Double.valueOf(displaceAngle[1][i][valueCol[0]]),
+                        Double.valueOf(displaceAngle[1][i][valueCol[1]]),
+                        Double.valueOf(displaceAngle[1][i][valueCol[2]]),
+                        Double.valueOf(displaceAngle[1][i][valueCol[3]]),
+                        Double.valueOf(displaceAngle[1][i][valueCol[4]]),
+                        Double.valueOf(displaceAngle[1][i][valueCol[5]]),
+                        Double.valueOf(displaceAngle[1][i][valueCol[6]]));
+
+                envelopeYNot = floorh[i] / Util.getAvg(
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[0]]),
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[1]]),
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[2]]),
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[3]]),
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[4]]),
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[5]]),
+                        Double.valueOf(displaceAngleNot[1][i][valueCol[6]]));
+
+//                envelopeX = floorh[i] / Math.max(Double.valueOf(displaceAngle[0][i][valueCol[0]]),
+//                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[1]]),
+//                                Math.max(Double.valueOf(displaceAngle[0][i][valueCol[2]]),
+//                                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[3]]),
+//                                                Math.max(Double.valueOf(displaceAngle[0][i][valueCol[4]]),
+//                                                        Math.max(Double.valueOf(displaceAngle[0][i][valueCol[5]]),
+//                                                                Double.valueOf(displaceAngle[0][i][valueCol[6]])))))));
+//                envelopeXNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[0]]),
+//                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[1]]),
+//                                Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[2]]),
+//                                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[3]]),
+//                                                Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[4]]),
+//                                                        Math.max(Double.valueOf(displaceAngleNot[0][i][valueCol[5]]),
+//                                                                Double.valueOf(displaceAngleNot[0][i][valueCol[6]])))))));
+//                envelopeY = floorh[i] / Math.max(Double.valueOf(displaceAngle[1][i][valueCol[0]]),
+//                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[1]]),
+//                                Math.max(Double.valueOf(displaceAngle[1][i][valueCol[2]]),
+//                                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[3]]),
+//                                                Math.max(Double.valueOf(displaceAngle[1][i][valueCol[4]]),
+//                                                        Math.max(Double.valueOf(displaceAngle[1][i][valueCol[5]]),
+//                                                                Double.valueOf(displaceAngle[1][i][valueCol[6]])))))));
+//                envelopeYNot = floorh[i] / Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[0]]),
+//                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[1]]),
+//                                Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[2]]),
+//                                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[3]]),
+//                                                Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[4]]),
+//                                                        Math.max(Double.valueOf(displaceAngleNot[1][i][valueCol[5]]),
+//                                                                Double.valueOf(displaceAngleNot[1][i][valueCol[6]])))))));
 
                 //获取包络值列的最小值
                 minEnvelopeX = minEnvelopeX == null ? envelopeX : Math.min(minEnvelopeX, envelopeX);
@@ -1331,21 +1368,39 @@ public class InsertToWord {
 
                 //x方向
                 //包络值
-                forceEnvelope = Math.max(forceX[floor - i - 1][valueCol[0]],
-                        Math.max(forceX[floor - i - 1][valueCol[1]],
-                                Math.max(forceX[floor - i - 1][valueCol[2]],
-                                        Math.max(forceX[floor - i - 1][valueCol[3]],
-                                                Math.max(forceX[floor - i - 1][valueCol[4]],
-                                                        Math.max(forceX[floor - i - 1][valueCol[5]],
-                                                                forceX[floor - i - 1][valueCol[6]]))))));
+                forceEnvelope = Util.getAvg(
+                        forceX[floor - i - 1][valueCol[0]],
+                        forceX[floor - i - 1][valueCol[1]],
+                        forceX[floor - i - 1][valueCol[2]],
+                        forceX[floor - i - 1][valueCol[3]],
+                        forceX[floor - i - 1][valueCol[4]],
+                        forceX[floor - i - 1][valueCol[5]],
+                        forceX[floor - i - 1][valueCol[6]]);
 
-                shapeEnvelope = Math.max(shapeX[floor - i - 1][valueCol[0]],
-                        Math.max(shapeX[floor - i - 1][valueCol[1]],
-                                Math.max(shapeX[floor - i - 1][valueCol[2]],
-                                        Math.max(shapeX[floor - i - 1][valueCol[3]],
-                                                Math.max(shapeX[floor - i - 1][valueCol[4]],
-                                                        Math.max(shapeX[floor - i - 1][valueCol[5]],
-                                                                shapeX[floor - i - 1][valueCol[6]]))))));
+                shapeEnvelope = Util.getAvg(
+                        shapeX[floor - i - 1][valueCol[0]],
+                        shapeX[floor - i - 1][valueCol[1]],
+                        shapeX[floor - i - 1][valueCol[2]],
+                        shapeX[floor - i - 1][valueCol[3]],
+                        shapeX[floor - i - 1][valueCol[4]],
+                        shapeX[floor - i - 1][valueCol[5]],
+                        shapeX[floor - i - 1][valueCol[6]]);
+
+//                forceEnvelope = Math.max(forceX[floor - i - 1][valueCol[0]],
+//                        Math.max(forceX[floor - i - 1][valueCol[1]],
+//                                Math.max(forceX[floor - i - 1][valueCol[2]],
+//                                        Math.max(forceX[floor - i - 1][valueCol[3]],
+//                                                Math.max(forceX[floor - i - 1][valueCol[4]],
+//                                                        Math.max(forceX[floor - i - 1][valueCol[5]],
+//                                                                forceX[floor - i - 1][valueCol[6]]))))));
+//
+//                shapeEnvelope = Math.max(shapeX[floor - i - 1][valueCol[0]],
+//                        Math.max(shapeX[floor - i - 1][valueCol[1]],
+//                                Math.max(shapeX[floor - i - 1][valueCol[2]],
+//                                        Math.max(shapeX[floor - i - 1][valueCol[3]],
+//                                                Math.max(shapeX[floor - i - 1][valueCol[4]],
+//                                                        Math.max(shapeX[floor - i - 1][valueCol[5]],
+//                                                                shapeX[floor - i - 1][valueCol[6]]))))));
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row25.getCell(2).getText()), 1d / Double.valueOf(row25.getCell(3).getText()));
                 dealCellSM(row25.getCell(18), Util.getPrecisionString(forceEnvelope, 0));
                 dealCellSM(row25.getCell(19), Util.getPrecisionString(shapeEnvelope, 2));
@@ -1368,21 +1423,39 @@ public class InsertToWord {
 
                 //y方向
                 //包络值
-                forceEnvelope = Math.max(forceY[floor - i - 1][valueCol[0]],
-                        Math.max(forceY[floor - i - 1][valueCol[1]],
-                                Math.max(forceY[floor - i - 1][valueCol[2]],
-                                        Math.max(forceY[floor - i - 1][valueCol[3]],
-                                                Math.max(forceY[floor - i - 1][valueCol[4]],
-                                                        Math.max(forceY[floor - i - 1][valueCol[5]],
-                                                                forceY[floor - i - 1][valueCol[6]]))))));
+                forceEnvelope = Util.getAvg(
+                        forceY[floor - i - 1][valueCol[0]],
+                        forceY[floor - i - 1][valueCol[1]],
+                        forceY[floor - i - 1][valueCol[2]],
+                        forceY[floor - i - 1][valueCol[3]],
+                        forceY[floor - i - 1][valueCol[4]],
+                        forceY[floor - i - 1][valueCol[5]],
+                        forceY[floor - i - 1][valueCol[6]]);
 
-                shapeEnvelope = Math.max(shapeY[floor - i - 1][valueCol[0]],
-                        Math.max(shapeY[floor - i - 1][valueCol[1]],
-                                Math.max(shapeY[floor - i - 1][valueCol[2]],
-                                        Math.max(shapeY[floor - i - 1][valueCol[3]],
-                                                Math.max(shapeY[floor - i - 1][valueCol[4]],
-                                                        Math.max(shapeY[floor - i - 1][valueCol[5]],
-                                                        shapeY[floor - i - 1][valueCol[6]]))))));
+                shapeEnvelope = Util.getAvg(
+                        shapeY[floor - i - 1][valueCol[0]],
+                        shapeY[floor - i - 1][valueCol[1]],
+                        shapeY[floor - i - 1][valueCol[2]],
+                        shapeY[floor - i - 1][valueCol[3]],
+                        shapeY[floor - i - 1][valueCol[4]],
+                        shapeY[floor - i - 1][valueCol[5]],
+                        shapeY[floor - i - 1][valueCol[6]]);
+
+//                forceEnvelope = Math.max(forceY[floor - i - 1][valueCol[0]],
+//                        Math.max(forceY[floor - i - 1][valueCol[1]],
+//                                Math.max(forceY[floor - i - 1][valueCol[2]],
+//                                        Math.max(forceY[floor - i - 1][valueCol[3]],
+//                                                Math.max(forceY[floor - i - 1][valueCol[4]],
+//                                                        Math.max(forceY[floor - i - 1][valueCol[5]],
+//                                                                forceY[floor - i - 1][valueCol[6]]))))));
+//
+//                shapeEnvelope = Math.max(shapeY[floor - i - 1][valueCol[0]],
+//                        Math.max(shapeY[floor - i - 1][valueCol[1]],
+//                                Math.max(shapeY[floor - i - 1][valueCol[2]],
+//                                        Math.max(shapeY[floor - i - 1][valueCol[3]],
+//                                                Math.max(shapeY[floor - i - 1][valueCol[4]],
+//                                                        Math.max(shapeY[floor - i - 1][valueCol[5]],
+//                                                        shapeY[floor - i - 1][valueCol[6]]))))));
 
                 speedEnvelope = Math.pow(forceEnvelope / Double.valueOf(row26.getCell(2).getText()), 1d / Double.valueOf(row26.getCell(3).getText()));
                 dealCellSM(row26.getCell(18), Util.getPrecisionString(forceEnvelope, 0));
